@@ -1,0 +1,23 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Ubuntu:wght@300&display=swap');
+
+
+
+
+h1{
+    font-family: 'Montserrat';
+    font-size: 3rem; 
+    line-height: 1.5; 
+    font-weight: 900;
+    color: #621c74;
+    z-index: 1;
+    text-transform: capitalize;
+}
+
+
+.img-fluid{
+   
+    width: 65%;
+    z-index: -1;
+    
+}
