@@ -12,7 +12,7 @@
         'resources/js/app.js',
     ])
     </head>
-    <body>
+    <body style="background-color: rgb(255, 255, 255)";>
         <div id="app"></div>
     </body>
 </html>
