@@ -3,7 +3,7 @@ import { Button } from "bootstrap"
 
 
 const Title=()=>{
-  return (  <section className="">
+  return (  <section id="title">
   <div className="container">
     <div className="d-flex">
     <div className="m-5 title">

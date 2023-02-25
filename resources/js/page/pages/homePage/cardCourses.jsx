@@ -1,15 +1,15 @@
 const CardCourses = () => {
     return (
         <section id="press">
-            <h1 className="mb-5 text-capitalize">Explore top courses </h1>
+            <h1 className="mb-5 ">Explore top courses </h1>
             <div className="row  ">
                 {/* first Card */}
              <div className="col-lg-3 col-md-5 ">
-                <div class="card shadow-lg">
+                <div className="card shadow-lg">
                     <img src="images/title/course.jpg" className="card-img-top" alt="..." />
                     <div className="card-body my-2">
                         <h5 className="card-title w-75">Lorem ipsum dolor sit amet.</h5>
-                        <p class="card-text fs-5 my-1 ">
+                        <p className="card-text fs-5 my-1 ">
                             Major
                         </p>
                         <div href="#" className="card-text mt-4">
@@ -63,7 +63,7 @@ const CardCourses = () => {
                     <img src="images/title/course.jpg" className="card-img-top" alt="..." />
                     <div className="card-body my-2">
                         <h5 className="card-title w-75">Lorem ipsum dolor sit amet.</h5>
-                        <p class="card-text fs-5 my-1 ">
+                        <p className="card-text fs-5 my-1 ">
                             Major
                         </p>
                         <div href="#" className="card-text mt-4">

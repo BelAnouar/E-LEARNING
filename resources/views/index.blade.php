@@ -3,8 +3,9 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-       
-        <title>Laravel 9 vite with react</title>
+        <link rel="icon" href="/images/logos/online-learning.png">
+        <title>E-Simplified
+        </title>
          
         @viteReactRefresh
         @vite('resources/js/index.jsx')

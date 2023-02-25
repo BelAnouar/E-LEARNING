@@ -1,7 +1,9 @@
+import { Link } from "react-router-dom";
+
 const Navbar = () => {
     return (
     
-        <nav className="navbar navbar-expand-lg bg-body-tertiary">
+        <nav className="navbar navbar-expand-lg bg-body-tertiary ">
         <div className="container">
           <a className="navbar-brand fw-bolder" href="#">
           <img src="/images/logos/online-learning.png" className="mb-3" alt="E-simplified" width="40" height="40"/>
@@ -12,25 +14,27 @@ const Navbar = () => {
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav ms-auto my-2 mx-2">
                     <li className="nav-item">
-                        <a className="nav-link" href="">Home</a>
+                        <Link className="nav-link" to="/">Home</Link>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="">Program&Degrees</a>
+                        <Link className="nav-link" to="/Program&Degrees">Program&Degrees</Link>
                     </li>
                     <li className="nav-item">
                         {" "}
-                        <a className="nav-link" href="">courses</a>
+                        <Link className="nav-link" to="/courses">courses</Link>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="">Books</a>
+                        <Link className="nav-link" to="/Books">Books</Link>
                     </li>
                     <li className="nav-item">
                         <a className="nav-link" href="">contact</a>
                     </li>
                 </ul>
                 <form class="d-flex mx-2 " >
-            <button className="btn btn-outline-light text-dark " type="submit">Sign in</button>
-            <button class="btn btn-success ms-2" type="submit">Register</button>
+            <button className="btn btn-outline-light text-dark " type="submit">
+          <Link to='/SignIn' className="nav-link"> Sign in </Link> </button>
+            <button class="btn btn-success ms-2" type="submit">
+            <Link to='/Register' className="nav-link">  Register  </Link>  </button>
           </form>
             
           </div>
@@ -39,7 +43,7 @@ const Navbar = () => {
       
     
    
-   
+  
     );
 };
 

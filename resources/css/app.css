@@ -80,12 +80,22 @@ h1{
     font-family: 'Montserrat'; 
    font-size: initial;
     font-weight: 900;
-    color: #621c74;
-    z-index: 1;
+   
     text-transform: capitalize;
      
 }
 
+h2{
+    font-family: "Montserrat";
+}
+#title{
+    padding: 1.7% 0;
+    
+}
+.title h1{
+    color: #621c74;
+    z-index: 1;
+}
 .title h3{
     font-size: medium;
     line-height: 1.7;
@@ -145,4 +155,98 @@ h1{
 #press{
     padding: 5% 0 5% 0;
     background-color: #F2F0EF;
+}
+
+#press h1{
+    color: #494166;
+    font-size: 3.8rem;
+    text-shadow: 2px 2px black;
+}
+#subcribe{
+    background-color: #85D1A0;
+    color: #fff;
+    text-align: center;
+     padding: 8% 25%;
+
+}
+
+.content{
+    max-width: 650px;
+    margin: 0 auto;
+}
+.content h2{
+    margin-bottom: 6rem;
+    line-height: 1.5;
+    font-weight: bolder;
+}
+
+.form-control{
+    height: 50px ;
+     
+}
+.form-control:focus{
+    box-shadow: none;
+    border: 2px solid #243c4f;
+}
+
+#button-subscribe{
+    background-color: #6255A5;
+    color:#fff;
+    font-weight: 600;
+}
+
+
+
+
+#titleCourse{
+    background-image: url("images/title/technologie.jpg") ;
+    background-size: cover;
+    color: #fff;
+    padding: 2% 0.5%;
+    margin:1rem 1rem 1rem 3rem;
+}
+
+
+
+.img {
+    background-image: url('images/title/login.jpg');
+  margin-right: -10px;
+  margin-left: -15px;
+  padding-bottom: 30%;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
+
+.form-control:valid {
+    background-color:  #fff!important;
+}
+
+
+.form-check-input{width: 30%; height: 30px;}
+
+.btn-login{
+    
+    color: var(--white);
+    background: #6255A5;
+    border: transparent;
+    border-radius: var(--borderRadius);
+    letter-spacing: var(--letterSpacing);
+    padding: 0.7rem 0.75rem;
+    box-shadow: var(--shadow-2);
+    transition: var(--transition);
+    text-transform: capitalize;
+    display: inline-block;
+    
+}
+
+.TitleBooks{
+    background-image: url('images/title/Book.jpg');
+   
+    padding-bottom: 40%;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
