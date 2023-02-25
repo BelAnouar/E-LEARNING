@@ -30,10 +30,10 @@ const Navbar = () => {
                         <a className="nav-link" href="">contact</a>
                     </li>
                 </ul>
-                <form class="d-flex mx-2 " >
+                <form className="d-flex mx-2 " >
             <button className="btn btn-outline-light text-dark " type="submit">
           <Link to='/SignIn' className="nav-link"> Sign in </Link> </button>
-            <button class="btn btn-success ms-2" type="submit">
+            <button className="btn btn-success ms-2" type="submit">
             <Link to='/Register' className="nav-link">  Register  </Link>  </button>
           </form>
             

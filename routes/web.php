@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/{path?*}', function () {
+Route::get('/{any}', function () {
     return view('index');
-});
+})->where('any', '.*');
 
 
 

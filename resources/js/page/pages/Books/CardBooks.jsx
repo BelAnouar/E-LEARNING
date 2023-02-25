@@ -31,8 +31,8 @@ const CardBooks=()=>{
           return   ( 
            
                 
-             <div className="col-lg-3 col-md-5 "> <div class="card m-2">
-                <img src={item.image} class="card-img " alt={item.title}/>
+             <div className="col-lg-3 col-md-5 "> <div className="card m-2">
+                <img src={item.image} className="card-img " alt={item.title}/>
             </div></div>)
         })
       }</div>
