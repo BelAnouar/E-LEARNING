@@ -250,3 +250,10 @@ h2{
     background-repeat: no-repeat;
     background-size: cover;
 }
+
+.img-Contact{
+    background-image: url("images/title/contact.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    
+}

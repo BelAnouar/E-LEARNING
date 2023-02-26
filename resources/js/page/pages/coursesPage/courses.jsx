@@ -1,4 +1,5 @@
 import { Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 
 
 
@@ -16,7 +17,7 @@ const Course = () => {
             </div>
             <div className="row mb-3 ">
                 {/* first Card */}
-             <div className="col-lg-3 col-md-5 ">
+             <div className="col-lg-3 col-md-5 "> <Link to="/lesson" className="nav-link">
                 <div className="card shadow-lg">
                     <img src="images/title/course.jpg" className="card-img-top" alt="..." />
                     <div className="card-body my-2">
@@ -28,13 +29,13 @@ const Course = () => {
                             <small className="text-dark fs-6">Courses</small>
                         </div>
                     </div>
-                </div>
+                </div></Link>
             </div>
 
 
 
 
-            <div className="col-lg-3 col-md-5 ">
+            <div className="col-lg-3 col-md-5 "> <Link to="/lesson" className="nav-link">
                 <div className="card shadow-lg">
                     <img src="images/title/course.jpg" className="card-img-top" alt="..." />
                     <div className="card-body my-2">
@@ -46,14 +47,14 @@ const Course = () => {
                             <small className="text-dark fs-6">Courses</small>
                         </div>
                     </div>
-                </div>
+                </div></Link>
             </div>
 
 
 
 
 
-            <div className="col-lg-3 col-md-5 ">
+            <div className="col-lg-3 col-md-5 "> <Link to="/lesson" className="nav-link">
                 <div className="card shadow-lg">
                     <img src="images/title/course.jpg" className="card-img-top" alt="..." />
                     <div className="card-body my-2">
@@ -65,12 +66,12 @@ const Course = () => {
                             <small className="text-dark fs-6">Courses</small>
                         </div>
                     </div>
-                </div>
+                </div></Link>
             </div>
 
 
 
-            <div className="col-lg-3 col-md-5 ">
+            <div className="col-lg-3 col-md-5 "> <Link to="/lesson" className="nav-link">
                 <div className="card shadow-lg">
                     <img src="images/title/course.jpg" className="card-img-top" alt="..." />
                     <div className="card-body my-2">
@@ -82,7 +83,7 @@ const Course = () => {
                             <small className="text-dark fs-6">Courses</small>
                         </div>
                     </div>
-                </div>
+                </div></Link>
             </div>
             
             
@@ -97,7 +98,7 @@ const Course = () => {
 
             <div className="row mb-3 ">
                 {/* first Card */}
-             <div className="col-lg-3 col-md-5 ">
+             <div className="col-lg-3 col-md-5 "> <Link to="/lesson" className="nav-link">
                 <div className="card shadow-lg">
                     <img src="images/title/course.jpg" className="card-img-top" alt="..." />
                     <div className="card-body my-2">
@@ -109,13 +110,13 @@ const Course = () => {
                             <small className="text-dark fs-6">Courses</small>
                         </div>
                     </div>
-                </div>
+                </div></Link>
             </div>
 
 
 
 
-            <div className="col-lg-3 col-md-5 ">
+            <div className="col-lg-3 col-md-5 "> <Link to="/lesson" className="nav-link">
                 <div className="card shadow-lg">
                     <img src="images/title/course.jpg" className="card-img-top" alt="..." />
                     <div className="card-body my-2">
@@ -127,14 +128,14 @@ const Course = () => {
                             <small className="text-dark fs-6">Courses</small>
                         </div>
                     </div>
-                </div>
+                </div></Link>
             </div>
 
 
 
 
 
-            <div className="col-lg-3 col-md-5 ">
+            <div className="col-lg-3 col-md-5 "> <Link to="/lesson" className="nav-link">
                 <div className="card shadow-lg">
                     <img src="images/title/course.jpg" className="card-img-top" alt="..." />
                     <div className="card-body my-2">
@@ -146,12 +147,12 @@ const Course = () => {
                             <small className="text-dark fs-6">Courses</small>
                         </div>
                     </div>
-                </div>
+                </div></Link>
             </div>
 
 
 
-            <div className="col-lg-3 col-md-5 ">
+            <div className="col-lg-3 col-md-5 "> <Link to="/lesson" className="nav-link">
                 <div className="card shadow-lg">
                     <img src="images/title/course.jpg" className="card-img-top" alt="..." />
                     <div className="card-body my-2">
@@ -163,7 +164,7 @@ const Course = () => {
                             <small className="text-dark fs-6">Courses</small>
                         </div>
                     </div>
-                </div>
+                </div></Link>
             </div>
             
             

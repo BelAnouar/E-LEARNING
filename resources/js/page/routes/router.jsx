@@ -2,7 +2,9 @@ import { createBrowserRouter} from "react-router-dom";
 
 import Error from "../components/Error"
 import Books from "../pages/Books";
+import Contact from "../pages/contact";
 import Courses from "../pages/coursesPage";
+import FAQ from "../pages/FAQ";
 import Home from "../pages/homePage";
 import Lesson from "../pages/leson";
 import Programs from "../pages/Program&Degrees";
@@ -28,6 +30,10 @@ const router=createBrowserRouter([
         path:"/Register",element:<Register/>
     },{
         path:"/lesson",element:<Lesson/>
+    },{
+        path:"/contact",element:<Contact/>
+    },{
+        path:"/FAQ",element:<FAQ/>
     }
 ])
 

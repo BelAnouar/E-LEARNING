@@ -11,12 +11,12 @@ const Footer = () => {
     return (
         <footer className="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-5 my-4 container ">
             <div className="col mb-3">
-                <a
-                    href="/"
+                <Link
+                    to="/"
                     className="d-flex align-items-center mb-3 link-dark text-decoration-none"
                 >
                     <h5>E-Simplified</h5>
-                </a>
+                </Link>
                 <div className="country mb-4">
                     <FormControl
                         variant="standard"
@@ -79,24 +79,24 @@ const Footer = () => {
                 <h5 className="text-capitalize">links</h5>
                 <ul className="nav flex-column">
                     <li className="nav-item mb-2">
-                        <a href="#" className="nav-link p-0 text-muted">
+                        <Link to="/" className="nav-link p-0 text-muted">
                             Home
-                        </a>
+                        </Link>
                     </li>
                     <li className="nav-item mb-2">
-                        <a href="#" className="nav-link p-0 text-muted">
+                        <Link to="/courses" className="nav-link p-0 text-muted">
                             courses
-                        </a>
+                        </Link>
                     </li>
                     <li className="nav-item mb-2">
-                        <a href="#" className="nav-link p-0 text-muted">
+                        <Link to="/Books" className="nav-link p-0 text-muted">
                             Books
-                        </a>
+                        </Link>
                     </li>
                     <li className="nav-item mb-2">
-                        <a href="#" className="nav-link p-0 text-muted">
+                        <Link to="#" className="nav-link p-0 text-muted">
                             About us
-                        </a>
+                        </Link>
                     </li>
                 </ul>
             </div>
@@ -105,24 +105,24 @@ const Footer = () => {
                 <h5 className="text-capitalize">commutiny</h5>
                 <ul className="nav flex-column">
                     <li className="nav-item mb-2">
-                        <a href="#" className="nav-link p-0 text-muted">
+                        <Link to="#" className="nav-link p-0 text-muted">
                             Go premium
-                        </a>
+                        </Link>
                     </li>
                     <li className="nav-item mb-2">
-                        <a href="#" className="nav-link p-0 text-muted">
+                        <Link to="/contact" className="nav-link p-0 text-muted">
                             contact
-                        </a>
+                        </Link>
                     </li>
                     <li className="nav-item mb-2">
-                        <a href="#" className="nav-link p-0 text-muted">
+                        <Link to="#" className="nav-link p-0 text-muted">
                             Pricing
-                        </a>
+                        </Link>
                     </li>
                     <li className="nav-item mb-2">
-                        <a href="#" className="nav-link p-0 text-muted">
+                        <Link to="#" className="nav-link p-0 text-muted">
                             Blog
-                        </a>
+                        </Link>
                     </li>
                 </ul>
             </div>
@@ -131,19 +131,19 @@ const Footer = () => {
                 <h5 className="text-capitalize">resources</h5>
                 <ul className="nav flex-column">
                     <li className="nav-item mb-2">
-                        <a href="#" className="nav-link p-0 text-muted">
+                        <Link to="#" className="nav-link p-0 text-muted">
                             Susport
-                        </a>
+                        </Link>
                     </li>
                     <li className="nav-item mb-2">
-                        <a href="#" className="nav-link p-0 text-muted">
+                        <Link to="/contact" className="nav-link p-0 text-muted">
                             Contact
-                        </a>
+                        </Link>
                     </li>
                     <li className="nav-item mb-2">
-                        <a href="#" className="nav-link p-0 text-muted">
+                        <Link to="/FAQ" className="nav-link p-0 text-muted">
                             FAQ
-                        </a>
+                        </Link>
                     </li>
                 </ul>
             </div>
