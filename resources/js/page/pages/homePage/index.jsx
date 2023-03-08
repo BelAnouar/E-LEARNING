@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import Footer from "../../components/footer";
 import Navbar from "../../components/Navbar";
 import CardCourses from "./cardCourses";
@@ -7,6 +8,7 @@ import Subscribe from "./subscribe";
 import Title from "./title";
 
 export default function Home() {
+ 
     return ( <section id="homePage">
     <div className="container">
       <Navbar/>

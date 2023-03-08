@@ -16,9 +16,7 @@ const CardBooks=()=>{
      useEffect(()=>{
         BookApi()
     },[])
-   
-    console.log(Book);
-   
+      
   return ( <section id="press" >
   <div className="container col-12 mb-4 ">
     <div className=" text-info border-bottom border-info">

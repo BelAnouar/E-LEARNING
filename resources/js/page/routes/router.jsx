@@ -10,6 +10,7 @@ import Lesson from "../pages/leson";
 import Programs from "../pages/Program&Degrees";
 import Register from "../pages/Register";
 import SignIn from "../pages/signin";
+import FilterCard from "../pages/filtercard";
 
 
 const router=createBrowserRouter([
@@ -34,6 +35,8 @@ const router=createBrowserRouter([
         path:"/contact",element:<Contact/>
     },{
         path:"/FAQ",element:<FAQ/>
+    },{
+        path:"/Find" ,element:<FilterCard/>
     }
 ])
 

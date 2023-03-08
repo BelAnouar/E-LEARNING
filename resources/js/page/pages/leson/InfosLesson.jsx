@@ -25,10 +25,18 @@ export default function Info() {
             Accordion 1</Typography>
         </AccordionSummary>
         <AccordionDetails sx={{borderTop: '1px solid rgba(0, 0, 0, .125)'}}>
-          <Typography>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-            malesuada lacus ex, sit amet blandit leo lobortis eget.
-          </Typography>
+          
+            <ul className='navbar-nav ms-3'>
+              <li className='nav-item'> <a className='nav-link' href='#'>
+              Lorem ipsum dolor sit amet consectetur</a></li>
+              <li className='nav-item'><a className='nav-link' href='#'>
+              Lorem ipsum dolor sit amet consectetur</a></li>
+              <li className='nav-item'><a className='nav-link' href='#'>
+              Lorem ipsum dolor sit amet consectetur</a></li>
+              <li className='nav-item'><a className='nav-link' href='#'>
+              Lorem ipsum dolor sit amet consectetur</a></li>
+            </ul>
+        
         </AccordionDetails>
       </Accordion>
       <Accordion disableGutters square>
@@ -40,7 +48,7 @@ export default function Info() {
           <Typography> <CreateNewFolderIcon  sx={{ color:'#944CBF',mr:2,mb:1 }}/> Accordion 2</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography>
+          <Typography >
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
             malesuada lacus ex, sit amet blandit leo lobortis eget.
           </Typography>

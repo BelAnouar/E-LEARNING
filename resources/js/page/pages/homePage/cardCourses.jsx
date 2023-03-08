@@ -81,7 +81,9 @@ const CardCourses = () => {
             </div>
 
             <div className="text-center mt-5">
-                <button type="button" className="btn btn-light btn-lg  ">Explore more</button>
+                <button type="button" className="btn btn-light btn-lg  ">
+                 <Link to="/lesson" className="nav-link">
+                 Explore more</Link></button>
             </div>
         </section>
     );

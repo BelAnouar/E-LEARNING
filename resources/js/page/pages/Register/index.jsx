@@ -1,6 +1,45 @@
 import { Box, Typography } from "@mui/material";
+import { toast } from "react-toastify"
+import { useDispatch, useSelector } from "react-redux"
+import { loginUser, registerUser } from "../../features/user/userSlice"
+import { useState } from "react";
+
+const initialState={
+    fullName:"",email:"",name:"",password:""
+}
+
 
 const Register = () => {
+
+    const {user,isLoding}=useSelector(state=>state.user);
+    const dispatch=useDispatch()
+
+const [values,setValues]=useState(initialState);
+
+
+
+function handleChange(e) {
+    const {name,value}=e.target;
+    setValues(prvent =>{
+        return {...prvent,[name]:value}
+    })
+
+}
+function onSubmit(e){
+    console.log('jj');
+    e.preventDefault();
+    const {fullName,name,email,password,}=values;
+    if(!fullName||!email||!password|| !name){
+        console.log("kk");
+         toast.error("Please fill out All fields")
+         return;
+    }
+
+    dispatch(registerUser({fullName,name,email,password}))
+}
+
+console.log(values);
+
     return (
         <section className="">
             <div className="container-fluid">
@@ -47,37 +86,39 @@ const Register = () => {
                     </div>
                     <div className="col-md-5">
                         <div className=" align-items-center  px-5 ms-xl-4 mt-5 pt-5 pt-xl-0 mt-xl-n5">
-                            <form style={{ width: "23rem" }}>
+                            <form style={{ width: "23rem" }} onSubmit={onSubmit} >
                                 <div className="d-flex flex-row navbar-nav fs-5 border-bottom border-2 mb-4">
                                     <a href="/Register" className="nav-link me-2 ">Register</a>
                                     <a href="/SignIn" className="nav-link">Sign in</a>
                                 </div>
 
                                 <div className="form-floating mb-3 ">
-                                    <input
+                                    <input onChange={handleChange}
                                         type="text"
                                         className="form-control border border-dark rounded-0"
                                         id="floatingInput"
                                         placeholder="Full Name"
+                                        value={values.fullName}  name="fullName"
+                                        
                                     />
                                     <label for="floatingInput">Full Name</label>
                                 </div>
                                 <div className="form-floating mb-3">
-                                    <input
+                                    <input onChange={handleChange}
                                         type="email"
                                         className="form-control border border-dark rounded-0"
                                         id="floatingPassword"
-                                        placeholder="Email"
+                                        placeholder="Email" value={values.email} name="email"
                                     />
                                     <label for="floatingPassword">Email</label>
                                 </div>
 
                                 <div className="form-floating mb-3">
-                                    <input
+                                    <input onChange={handleChange}
                                         type="text"
                                         className="form-control border border-dark rounded-0"
                                         id="floatingPassword"
-                                        placeholder="Public Username"
+                                        placeholder="Public Username" name="name" value={values.name}
                                     />
                                     <label for="floatingPassword">
                                         Public Username
@@ -85,11 +126,11 @@ const Register = () => {
                                 </div>
 
                                 <div className="form-floating mb-3">
-                                    <input
+                                    <input onChange={handleChange}
                                         type="password"
                                         className="form-control border border-dark rounded-0"
                                         id="floatingPassword"
-                                        placeholder="Password"
+                                        placeholder="Password" value={values.password} name="password"
                                     />
                                     <label for="floatingPassword">
                                         Password
@@ -113,10 +154,10 @@ const Register = () => {
                                 </div>
 
                                 <div className="form-check fs-4 ">
-                                    <input
+                                    <input onChange={handleChange}
                                         className="form-check-input  rounded-0  "
                                         type="checkbox"
-                                        id="defaultCheck2"
+                                        id="defaultCheck2" 
                                     />
                                     <label
                                         className="form-check-label text-muted fs-6"
@@ -135,10 +176,10 @@ const Register = () => {
                                 </Typography>
 
                                 <div className="pt-1 mb-4">
-                                    <button
-                                        className="btn-login  mt-2
+                                    <button 
+                                        className="btn-login  mt-2 
                                          rounded-0"
-                                        type="button"
+                                         type="submit"
                                     >
                                         Create an account
                                     </button>

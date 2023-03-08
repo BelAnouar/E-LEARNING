@@ -13,8 +13,7 @@ const Footer = () => {
             <div className="col mb-3">
                 <Link
                     to="/"
-                    className="d-flex align-items-center mb-3 link-dark text-decoration-none"
-                >
+                    className="d-flex align-items-center mb-3 link-dark text-decoration-none" >
                     <h5>E-Simplified</h5>
                 </Link>
                 <div className="country mb-4">

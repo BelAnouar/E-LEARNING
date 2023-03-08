@@ -1,0 +1,10 @@
+import axios from "axios";
+
+
+const custumFetch=axios.create({
+    baseURL:"https://jobify-prod.herokuapp.com/api/v1/toolkit"
+})
+
+
+
+export default custumFetch
