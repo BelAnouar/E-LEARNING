@@ -6,13 +6,23 @@ import ReactDOM from 'react-dom/client';
 
 import { RouterProvider } from 'react-router-dom';
 import router from './page/routes/router';
-import { Provider } from 'react-redux';
-import store from './page/store';
-import Navbar from './page/components/Navbar';
+
+import { ToastContainer } from 'react-toastify'
+
+import 'react-toastify/dist/ReactToastify.css';
+import { ContextProvider } from './page/pages/contexts/contextProvider';
+import { QueryClient, QueryClientProvider } from 'react-query'
 
 
-ReactDOM.createRoot(document.getElementById('app')).render(     
-    <Provider store={store}>
+
+const queryClient=new QueryClient()
+ReactDOM.createRoot(document.getElementById('app')).render( 
+  
+    <QueryClientProvider client={queryClient}>
+   <ContextProvider> 
     
-    <RouterProvider router={router}/></Provider>
+    <RouterProvider router={router}/>
+    <ToastContainer limit={1}/>
+    </ContextProvider>
+    </QueryClientProvider>  
 );

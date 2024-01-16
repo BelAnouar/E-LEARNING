@@ -1,7 +1,7 @@
 import Footer from "../../components/footer"
 import Navbar from "../../components/Navbar"
-import Certification from "./certification"
-import Course from "./courses"
+
+import Categorise from "./Categorise"
 import TitleCourses from "./titleCouses"
 
 
@@ -16,8 +16,7 @@ const Courses=()=>{
    <div className="container">
         <Navbar/>
         <TitleCourses/>
-       
-        <Course/>
+        <Categorise/>
         <Footer/>
         </div>
      </section>

@@ -1,12 +1,18 @@
 import { Typography } from "@mui/material";
 import { Link } from "react-router-dom";
+import { getCours } from "../../lib/helper";
+import { useQuery } from "react-query";
 
 
 
 
 
 
-const Course = () => {
+const Course = (props) => {
+
+   const data=props.Cours
+  
+    if (Object.keys(data).length === 0) return <div>data is Empty</div>;
     return (
         <section  id="press">
             <Typography className='fw-bold' variant='h4' gutterBottom>Browse online Computer Programming courses</Typography>
@@ -17,6 +23,27 @@ const Course = () => {
             </div>
             <div className="row mb-3 ">
                 {/* first Card */}
+                {data.map((Objitem,index) => { 
+                    
+                    return  (<div key={index} className="col-lg-3 col-md-5 "><Link to={`/lesson/${Objitem.idCours}`}  className="nav-link">
+                      <div className="card shadow-lg">
+                          <img src={Objitem.image} className="card-img-top" alt="..." />
+                          <div className="card-body my-2">
+                              <h5 className="card-title w-75">{Objitem.titre}</h5>
+                              <p className="card-text fs-5 my-1 ">
+                              {Objitem.enseignant}
+                              </p>
+                              <div href="#" className="card-text mt-4 d-flex justify-content-between">
+                                  <small className="text-dark fs-6">Courses</small>
+                                  <small className="text-dark fs-6 ">{Objitem.prix}</small>
+      
+                                 
+                              </div>
+                          </div>
+                      </div></Link>
+                  </div>  )
+            })} 
+
              <div className="col-lg-3 col-md-5 "> <Link to="/lesson" className="nav-link">
                 <div className="card shadow-lg">
                     <img src="images/title/course.jpg" className="card-img-top" alt="..." />

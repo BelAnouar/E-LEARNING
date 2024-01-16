@@ -4,19 +4,10 @@ import axios from "axios"
 
 
 
-const CardBooks=()=>{
-
-     const [Book,setBook]=useState([])
-     const BookApi= async()=>{
-        const res=await fetch('https://www.dbooks.org/api/recent')
-        const data=await res.json()
-        setBook(data.books)
-     }
-   
-     useEffect(()=>{
-        BookApi()
-    },[])
-      
+const CardBooks=(props)=>{
+   const {books}=props.Book
+   console.log(books);
+    
   return ( <section id="press" >
   <div className="container col-12 mb-4 ">
     <div className=" text-info border-bottom border-info">
@@ -25,7 +16,7 @@ const CardBooks=()=>{
          </Typography>
          </div> </div><div className="row  ">
       {
-        Book.map((item)=>{
+        books.map((item)=>{
           return   ( 
            
                 

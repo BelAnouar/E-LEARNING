@@ -1,11 +1,17 @@
 import { Link } from "react-router-dom";
+import MenuAccount from "./Menuaccount";
+import { useStateContext } from "../pages/contexts/contextProvider";
 
 const Navbar = () => {
+  
+
+  const {user,token}=useStateContext()
+  
     return (
     
         <nav className="navbar navbar-expand-lg bg-body-tertiary ">
         <div className="container">
-          <a className="navbar-brand fw-bolder" href="#">
+          <a className="navbar-brand fw-bolder" href="/">
           <img src="/images/logos/online-learning.png" className="mb-3" alt="E-simplified" width="40" height="40"/>
           E-Simplified</a>
           <button className="navbar-toggler " type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,12 +37,14 @@ const Navbar = () => {
                     </li>
                 </ul>
                 <form className="d-flex mx-2 " >
-            <button className="btn btn-outline-light text-dark " type="submit">
+   
+              {
+                (Object.keys(user).length===0)?(<><button className="btn btn-outline-light text-dark " type="submit">
           <Link to='/SignIn' className="nav-link"> Sign in </Link> </button>
             <button className="btn btn-success ms-2" type="submit">
-            <Link to='/Register' className="nav-link">  Register  </Link>  </button>
-          </form>
-            
+            <Link to='/Register' className="nav-link">  Register  </Link>  </button></>):(<MenuAccount user={user}/>)
+          }
+            </form>
           </div>
         </div>
       </nav>

@@ -6,16 +6,36 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import ReactPlayer from "react-player";
-
+import video from "../../../../../public/storage/files/ART.mp4"
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import Payement from '../../components/modalPayement';
+import { useQuery } from 'react-query';
+import { getWeeks } from '../../lib/weeks';
+import { getFiles } from '../../lib/Files';
+import VideoLesson from './VideoLesson';
 
-export default function Info() {
+export default function Info(props) {
+   const {idCour}=props
+
+   
+  const { data, isLoading, isError } = useQuery(['weeks', idCour], getWeeks);
+  const { data: filesData, isLoading: filesLoading, isError: filesError } = useQuery('files', getFiles);
+
+ 
+  if(isLoading|| filesLoading) return <div class="position-absolute top-50 start-50 translate-middle"></div>
+  if(isError || filesError) return <div>Error</div>
+
+   const [linkLesson,setLinkLesson]=React.useState(filesData[0].File)
+   const handleclick=(e)=>{
+    e.preventDefault()
+    setLinkLesson(e.target.getAttribute('href'));
+   }
     
   return (<section className='container'>
-  
+     
     <div className='row'>
     <div className='col-4 ms-4 '>
-    <Accordion disableGutters square >
+    {/* <Accordion disableGutters square >
         <AccordionSummary sx={{backgroundColor:'rgba(0, 0, 0, .03)'}}
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
@@ -62,31 +82,48 @@ export default function Info() {
         >
           <Typography><CreateNewFolderIcon  sx={{ color:'#944CBF',mr:2,mb:1 }}/>f</Typography>
         </AccordionSummary>
+      </Accordion> */}
+
+
+
+      {data.map((week,index)=>{
+        return(<>
+     
+          <Accordion disableGutters square key={index} >
+        <AccordionSummary sx={{backgroundColor:'rgba(0, 0, 0, .03)'}}
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+          <Typography  > <CreateNewFolderIcon  sx={{ color:'#944CBF',mr:2,mb:1 }}  />
+           {week.titre}</Typography>
+        </AccordionSummary><ul className='navbar-nav'>
+        {filesData.map((Item,index)=>{
+          if(week.idweek!==Item.idWeek)return false;
+          return(
+             <AccordionDetails key={index} sx={{borderTop: '1px solid rgba(0, 0, 0, .125)'}}>
+          
+            
+              <li className='nav-item'> <a href={Item.File} className='' onClick={handleclick}>
+              {Item.File}</a></li>
+              
+           
+        
+        </AccordionDetails>
+          )
+        })}
+        </ul>
       </Accordion>
+    </>
+        )
+      })}
+
+
+      
       
 
     </div>
-    <div className='col-md'>
-    
-    <ReactPlayer className="me-4"  width="100%"  
-                             url='https://youtu.be/VIiS68XsaFU' />
-    <div className='border-bottom border-primary'>
-    <h2  className="mt-4 fw-bold mb-3 " style={{color:"#1D3774"}}  >Lorem ipsum dolor sit amet.</h2>
-         </div>         
-
-          <div className='border-bottom border-primary'>
-    <h5 className="mt-4  mb-3" >Lorem ipsum is placeholder text commonly used in the graphic, print, 
-    and publishing industries for previewing layouts and visual mockups.</h5>
-         </div>  
-         <div className='border-bottom border-primary'>
-         <div className='mt-2'>
-                 <p> Instructeur: <span>Name</span> </p>
-                 <p> Participants actuels : <span>6 473</span> </p></div>
-         </div> 
-         <form className='text-end'>
-         <button  className=" button text-light mt-3 p-2">Next Lesson <NavigateNextIcon/>
-         </button></form>     
-    </div>
+    <VideoLesson/>
     </div></section>
   );
 }

@@ -1,44 +1,71 @@
 import { Box, Typography } from "@mui/material";
-import { toast } from "react-toastify"
-import { useDispatch, useSelector } from "react-redux"
-import { loginUser, registerUser } from "../../features/user/userSlice"
-import { useState } from "react";
 
-const initialState={
-    fullName:"",email:"",name:"",password:""
-}
-
+import { useEffect, useState } from "react";
+import { useFormik } from "formik";
+import { registerValidate } from "../../lib/validate";
+import axiosClient from "../api/axios-client";
+import { useStateContext } from "../contexts/contextProvider";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Register = () => {
+    const [location, setLocation] = useState(null);
+    const { setUser, setToken, token } = useStateContext();
+    const [errors, setErrors] = useState(null);
+    let navigate = useNavigate();
 
-    const {user,isLoding}=useSelector(state=>state.user);
-    const dispatch=useDispatch()
+    const formik = useFormik({
+        initialValues: {
+            fullName: "",
+            email: "",
+            name: "",
+            country: "",
+            agree: false,
+            role: "",
+        },
+        validate: registerValidate,
+        onSubmit,
+    });
+    async function onSubmit(values) {
+        console.log(values);
+        const payload = {
+            fullName: values.fullName,
+            name: values.name,
+            email: values.email,
+            password: values.password,
+            country: "MA",
+            role: "user",
+        };
 
-const [values,setValues]=useState(initialState);
+        await axiosClient
+            .post("/signup", payload)
+            .then(({ data }) => {
+                console.log(data);
+                setUser(data.user);
+                setToken(data.token);
 
-
-
-function handleChange(e) {
-    const {name,value}=e.target;
-    setValues(prvent =>{
-        return {...prvent,[name]:value}
-    })
-
-}
-function onSubmit(e){
-    console.log('jj');
-    e.preventDefault();
-    const {fullName,name,email,password,}=values;
-    if(!fullName||!email||!password|| !name){
-        console.log("kk");
-         toast.error("Please fill out All fields")
-         return;
+                return navigate("/SignIn");
+            })
+            .catch((err) => {
+                console.log(err);
+                const response = err.response;
+                if (response && response.status === 422) {
+                    setErrors(response.data.errors);
+                }
+            });
     }
 
-    dispatch(registerUser({fullName,name,email,password}))
-}
+    console.log(formik.errors);
+    async function fetchdata() {
+        const request = await fetch(
+            "https://ipinfo.io/json?token=4f04535df06377"
+        );
+        const datalocation = await request.json();
+        setLocation(datalocation);
+    }
 
-console.log(values);
+    useEffect(() => {
+        fetchdata();
+    }, []);
 
     return (
         <section className="">
@@ -54,7 +81,8 @@ console.log(values);
                                     gutterBottom
                                 >
                                     <a href="/" className="nav-link">
-                                    E-Simplifed</a>
+                                        E-Simplifed
+                                    </a>
                                 </Typography>
                                 <Box
                                     color="#fff"
@@ -62,7 +90,6 @@ console.log(values);
                                     component="h3"
                                     sx={{
                                         pt: "7rem",
-                                      
                                     }}
                                 >
                                     <Typography
@@ -86,53 +113,99 @@ console.log(values);
                     </div>
                     <div className="col-md-5">
                         <div className=" align-items-center  px-5 ms-xl-4 mt-5 pt-5 pt-xl-0 mt-xl-n5">
-                            <form style={{ width: "23rem" }} onSubmit={onSubmit} >
+                            <form
+                                style={{ width: "23rem" }}
+                                onSubmit={formik.handleSubmit}
+                            >
                                 <div className="d-flex flex-row navbar-nav fs-5 border-bottom border-2 mb-4">
-                                    <a href="/Register" className="nav-link me-2 ">Register</a>
-                                    <a href="/SignIn" className="nav-link">Sign in</a>
+                                    <a
+                                        href="/Register"
+                                        className="nav-link me-2 "
+                                    >
+                                        Register
+                                    </a>
+                                    <a href="/SignIn" className="nav-link">
+                                        Sign in
+                                    </a>
                                 </div>
-
+                                {errors && (
+                                    <div className="text-danger">
+                                        {Object.keys(errors).map((key) => (
+                                            <p key={key}>{errors[key][0]}</p>
+                                        ))}
+                                    </div>
+                                )}
                                 <div className="form-floating mb-3 ">
-                                    <input onChange={handleChange}
+                                    <input
                                         type="text"
                                         className="form-control border border-dark rounded-0"
                                         id="floatingInput"
                                         placeholder="Full Name"
-                                        value={values.fullName}  name="fullName"
-                                        
+                                        name="fullName"
+                                        {...formik.getFieldProps("fullName")}
                                     />
-                                    <label for="floatingInput">Full Name</label>
+                                    {formik.errors.fullName &&
+                                        formik.touched.fullName && (
+                                            <span className="text-danger mt-1">
+                                                {formik.errors.fullName}
+                                            </span>
+                                        )}
+                                    <label htmlFor="floatingInput">
+                                        Full Name
+                                    </label>
                                 </div>
                                 <div className="form-floating mb-3">
-                                    <input onChange={handleChange}
+                                    <input
                                         type="email"
                                         className="form-control border border-dark rounded-0"
-                                        id="floatingPassword"
-                                        placeholder="Email" value={values.email} name="email"
+                                        id="floatingEmail"
+                                        placeholder="Email"
+                                        name="email"
+                                        {...formik.getFieldProps("email")}
                                     />
-                                    <label for="floatingPassword">Email</label>
+                                    {formik.errors.email &&
+                                        formik.touched.email && (
+                                            <span className="text-danger mt-1">
+                                                {formik.errors.email}
+                                            </span>
+                                        )}
+                                    <label htmlFor="floatingEmail">Email</label>
                                 </div>
 
                                 <div className="form-floating mb-3">
-                                    <input onChange={handleChange}
+                                    <input
                                         type="text"
                                         className="form-control border border-dark rounded-0"
-                                        id="floatingPassword"
-                                        placeholder="Public Username" name="name" value={values.name}
+                                        id="floatingUsername"
+                                        placeholder="Public Username"
+                                        name="name"
+                                        {...formik.getFieldProps("name")}
                                     />
-                                    <label for="floatingPassword">
+                                    {formik.errors && (
+                                        <span className="text-danger mt-1">
+                                            {formik.errors.name}
+                                        </span>
+                                    )}
+                                    <label htmlFor="floatingUsername">
                                         Public Username
                                     </label>
                                 </div>
 
                                 <div className="form-floating mb-3">
-                                    <input onChange={handleChange}
+                                    <input
+                                        {...formik.getFieldProps("password")}
                                         type="password"
                                         className="form-control border border-dark rounded-0"
                                         id="floatingPassword"
-                                        placeholder="Password" value={values.password} name="password"
+                                        placeholder="Password"
+                                        name="password"
                                     />
-                                    <label for="floatingPassword">
+                                    {formik.errors && (
+                                        <span className="text-danger mt-1">
+                                            {formik.errors.password}
+                                        </span>
+                                    )}
+                                    <label htmlFor="floatingPassword">
                                         Password
                                     </label>
                                 </div>
@@ -141,51 +214,72 @@ console.log(values);
                                     <select
                                         className="form-select form-control border border-dark   rounded-0"
                                         id="selectCountry"
+                                        name="country"
                                         aria-label="Default select example"
+                                        {...formik.getFieldProps("country")}
                                     >
-                                        <option selected>country</option>
+                                        {location && (
+                                            <option
+                                                defaultValue={location.country}
+                                            >
+                                                {location.country}
+                                            </option>
+                                        )}
                                     </select>
                                     <label
                                         className="form-label"
-                                        for="selectCountry"
+                                        htmlFor="selectCountry"
                                     >
                                         country
                                     </label>
                                 </div>
 
                                 <div className="form-check fs-4 ">
-                                    <input onChange={handleChange}
-                                        className="form-check-input  rounded-0  "
+                                    <input
+                                        className="form-check-input rounded-0"
                                         type="checkbox"
-                                        id="defaultCheck2" 
+                                        id="defaultCheck2"
+                                        {...formik.getFieldProps("agree")}
+                                        defaultChecked={true}
                                     />
                                     <label
                                         className="form-check-label text-muted fs-6"
-                                        for="defaultCheck2"
+                                        htmlFor="defaultCheck2"
                                     >
                                         I agree
                                     </label>
                                 </div>
+                               { formik.errors && <span className="text-danger mt-1">{formik.errors.agree}</span>}
 
-                                <Typography variant="caption" display="block" className="small text-muted">
-                                By creating an account, you agree to the
-                                <a href="#" className="text-success " >Terms of Service and Honor Code </a>
-                                    and you acknowledge that E-simplified and each Member
-                                    process your personal data in accordance
-                                    with the <a href="#" className="text-success" > Privacy Policy </a> . 
+
+                                <Typography
+                                    variant="caption"
+                                    display="block"
+                                    className="small text-muted"
+                                >
+                                    By creating an account, you agree to the
+                                    <a href="#" className="text-success ">
+                                        Terms of Service and Honor Code{" "}
+                                    </a>
+                                    and you acknowledge that E-simplified and
+                                    each Member process your personal data in
+                                    accordance with the{" "}
+                                    <a href="#" className="text-success">
+                                        {" "}
+                                        Privacy Policy{" "}
+                                    </a>{" "}
+                                    .
                                 </Typography>
 
                                 <div className="pt-1 mb-4">
-                                    <button 
+                                    <button
                                         className="btn-login  mt-2 
                                          rounded-0"
-                                         type="submit"
+                                        type="submit"
                                     >
                                         Create an account
                                     </button>
                                 </div>
-
-                              
                             </form>
                         </div>
                     </div>
@@ -196,10 +290,3 @@ console.log(values);
 };
 
 export default Register;
-
-
-
-
-
-
-

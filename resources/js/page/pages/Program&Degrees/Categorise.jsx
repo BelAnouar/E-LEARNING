@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 
 
-const Course = () => {
+const Categorise = () => {
     return (
         <section  id="press">
             <Typography className='fw-bold mb-4' variant='h4' gutterBottom>Top catigories</Typography>
@@ -181,4 +181,4 @@ const Course = () => {
     );
 };
 
-export default Course;
+export default Categorise;
