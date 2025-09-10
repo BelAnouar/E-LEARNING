@@ -1,8 +1,10 @@
 import Footer from "../../components/footer"
 import Navbar from "../../components/Navbar"
 
-import Categorise from "./Categorise"
-import TitleCourses from "./titleCouses"
+import HeroBanner from "./HeroBanner"
+
+import { ProgramsAndDegrees } from "./ProgramsAndDegrees"
+
 
 
 
@@ -15,8 +17,8 @@ const Courses=()=>{
    return ( <section>
    <div className="container">
         <Navbar/>
-        <TitleCourses/>
-        <Categorise/>
+        <HeroBanner/>
+        <ProgramsAndDegrees/>
         <Footer/>
         </div>
      </section>
