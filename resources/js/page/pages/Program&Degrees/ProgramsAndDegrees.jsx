@@ -1,7 +1,7 @@
 "use client";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Container,
   Row,
@@ -22,648 +22,17 @@ import {
   Accordion
 } from 'react-bootstrap';
 import { Search, Filter, Grid, List, Heart, Star, Clock, Users, BookOpen, Award, MapPin, Calendar, DollarSign, CheckCircle, X } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { getPrograms } from '../../lib/programs';
+import axiosClient from '../../pages/api/axios-client';
 
-const ProgramSkeleton = () => (
-  <Card className="h-100">
-    <div className="position-relative" style={{ height: '200px', backgroundColor: '#f8f9fa' }}>
-      <Spinner animation="border" className="position-absolute top-50 start-50 translate-middle" />
-    </div>
-    <Card.Body>
-      <div className="mb-2" style={{ height: '24px', backgroundColor: '#e9ecef', borderRadius: '4px' }}></div>
-      <div className="mb-2" style={{ height: '16px', backgroundColor: '#e9ecef', borderRadius: '4px', width: '60%' }}></div>
-      <div className="mb-3" style={{ height: '60px', backgroundColor: '#e9ecef', borderRadius: '4px' }}></div>
-      <div className="d-flex justify-content-between">
-        <div style={{ height: '16px', backgroundColor: '#e9ecef', borderRadius: '4px', width: '40%' }}></div>
-        <div style={{ height: '32px', backgroundColor: '#e9ecef', borderRadius: '4px', width: '80px' }}></div>
-      </div>
-    </Card.Body>
-  </Card>
-);
-
-const ProgramCard = ({ program, onViewDetails, onSave, onCompare, isSaved, isCompared }) => (
-  <Card className="h-100 shadow-sm border-0" style={{ transition: 'transform 0.2s, box-shadow 0.2s' }}>
-    <div className="position-relative">
-      <Card.Img 
-        variant="top" 
-        src={program.image} 
-        alt={program.title}
-        style={{ height: '200px', objectFit: 'cover' }}
-      />
-      <div className="position-absolute top-0 end-0 p-2">
-        <Button
-          variant="light"
-          size="sm"
-          className="rounded-circle p-2 me-1"
-          onClick={() => onSave(program.id)}
-        >
-          <Heart size={16} fill={isSaved ? '#dc3545' : 'none'} color={isSaved ? '#dc3545' : '#6c757d'} />
-        </Button>
-      </div>
-      {program.scholarships && (
-        <Badge bg="success" className="position-absolute top-0 start-0 m-2">
-          Scholarships Available
-        </Badge>
-      )}
-    </div>
-    <Card.Body className="d-flex flex-column">
-      <div className="mb-2">
-        <Badge bg="outline-primary" className="me-2">{program.level}</Badge>
-        <Badge bg="outline-secondary">{program.category}</Badge>
-      </div>
-      <Card.Title className="h5 mb-2">{program.title}</Card.Title>
-      <Card.Subtitle className="mb-2 text-muted">
-        <MapPin size={14} className="me-1" />
-        {program.university}
-      </Card.Subtitle>
-      <Card.Text className="text-muted small flex-grow-1">
-        {program.description}
-      </Card.Text>
-      <div className="mb-3">
-        <div className="d-flex align-items-center mb-1">
-          <Clock size={14} className="me-2" />
-          <small className="text-muted">{program.duration}</small>
-        </div>
-        <div className="d-flex align-items-center mb-1">
-          <DollarSign size={14} className="me-2" />
-          <small className="text-muted">{program.tuition}</small>
-        </div>
-        <div className="d-flex align-items-center">
-          <Star size={14} className="me-1" fill="#ffc107" color="#ffc107" />
-          <small className="text-muted">{program.rating} ({program.reviews} reviews)</small>
-        </div>
-      </div>
-      <div className="d-flex gap-2">
-        <Button variant="primary" onClick={() => onViewDetails(program)} className="flex-grow-1">
-          View Details
-        </Button>
-        <Button
-          variant={isCompared ? "success" : "outline-secondary"}
-          onClick={() => onCompare(program.id)}
-        >
-          {isCompared ? <CheckCircle size={16} /> : "Compare"}
-        </Button>
-      </div>
-    </Card.Body>
-  </Card>
-);
-
-const ProgramListItem = ({ program, onViewDetails, onSave, onCompare, isSaved, isCompared }) => (
-  <Card className="mb-3 shadow-sm border-0">
-    <Row className="g-0">
-      <Col md={3}>
-        <Card.Img 
-          src={program.image} 
-          alt={program.title}
-          style={{ height: '200px', objectFit: 'cover' }}
-          className="rounded-start"
-        />
-      </Col>
-      <Col md={9}>
-        <Card.Body>
-          <div className="d-flex justify-content-between align-items-start mb-2">
-            <div>
-              <div className="mb-2">
-                <Badge bg="outline-primary" className="me-2">{program.level}</Badge>
-                <Badge bg="outline-secondary">{program.category}</Badge>
-                {program.scholarships && (
-                  <Badge bg="success" className="ms-2">Scholarships Available</Badge>
-                )}
-              </div>
-              <Card.Title className="h4 mb-1">{program.title}</Card.Title>
-              <Card.Subtitle className="mb-2 text-muted">
-                <MapPin size={16} className="me-1" />
-                {program.university} • {program.location}
-              </Card.Subtitle>
-            </div>
-            <Button
-              variant="light"
-              size="sm"
-              className="rounded-circle p-2"
-              onClick={() => onSave(program.id)}
-            >
-              <Heart size={16} fill={isSaved ? '#dc3545' : 'none'} color={isSaved ? '#dc3545' : '#6c757d'} />
-            </Button>
-          </div>
-          <Card.Text className="mb-3">{program.description}</Card.Text>
-          <Row className="mb-3">
-            <Col sm={6} md={3}>
-              <div className="d-flex align-items-center mb-2">
-                <Clock size={16} className="me-2 text-muted" />
-                <small>{program.duration}</small>
-              </div>
-            </Col>
-            <Col sm={6} md={3}>
-              <div className="d-flex align-items-center mb-2">
-                <DollarSign size={16} className="me-2 text-muted" />
-                <small>{program.tuition}</small>
-              </div>
-            </Col>
-            <Col sm={6} md={3}>
-              <div className="d-flex align-items-center mb-2">
-                <Star size={16} className="me-1 text-warning" fill="currentColor" />
-                <small>{program.rating} ({program.reviews})</small>
-              </div>
-            </Col>
-            <Col sm={6} md={3}>
-              <div className="d-flex align-items-center mb-2">
-                <Users size={16} className="me-2 text-muted" />
-                <small>{program.format}</small>
-              </div>
-            </Col>
-          </Row>
-          <div className="d-flex gap-2">
-            <Button variant="primary" onClick={() => onViewDetails(program)}>
-              View Details
-            </Button>
-            <Button
-              variant={isCompared ? "success" : "outline-secondary"}
-              onClick={() => onCompare(program.id)}
-            >
-              {isCompared ? <CheckCircle size={16} /> : "Compare"}
-            </Button>
-          </div>
-        </Card.Body>
-      </Col>
-    </Row>
-  </Card>
-);
-
-const ApplicationModal = ({ show, onHide, program }) => {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    previousEducation: '',
-    motivation: '',
-    startDate: '',
-    resume: null
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('bearer_token') : null;
-      const payload = {
-        programId: program?.id,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: formData.phone,
-        previousEducation: formData.previousEducation,
-        motivation: formData.motivation,
-        startDate: formData.startDate,
-      };
-      const res = await fetch('/api/applications', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error('Failed to submit');
-
-      setShowSuccess(true);
-      setTimeout(() => {
-        setShowSuccess(false);
-        onHide();
-        setFormData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          phone: '',
-          previousEducation: '',
-          motivation: '',
-          startDate: '',
-          resume: null,
-        });
-      }, 1500);
-    } catch (err) {
-      // Show a simple inline error using bootstrap Alert
-      setShowSuccess(false);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: files ? files[0] : value
-    }));
-  };
-
-  if (showSuccess) {
-    return (
-      <Modal show={show} onHide={onHide} centered>
-        <Modal.Body className="text-center py-5">
-          <CheckCircle size={64} className="text-success mb-3" />
-          <h4>Application Submitted!</h4>
-          <p className="text-muted mb-0">
-            Thank you for your interest in {program?.title}. We'll review your application and get back to you soon.
-          </p>
-        </Modal.Body>
-      </Modal>
-    );
-  }
-
-  return (
-    <Modal show={show} onHide={onHide} size="lg" centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Apply to {program?.title}</Modal.Title>
-      </Modal.Header>
-      <Form onSubmit={handleSubmit}>
-        <Modal.Body>
-          <Row>
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label>First Name *</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  required
-                />
-              </Form.Group>
-            </Col>
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label>Last Name *</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  required
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-          
-          <Row>
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label>Email *</Form.Label>
-                <Form.Control
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
-              </Form.Group>
-            </Col>
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label>Phone</Form.Label>
-                <Form.Control
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Previous Education *</Form.Label>
-            <Form.Select
-              name="previousEducation"
-              value={formData.previousEducation}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Select your highest education level</option>
-              <option value="high-school">High School</option>
-              <option value="associate">Associate Degree</option>
-              <option value="bachelor">Bachelor's Degree</option>
-              <option value="master">Master's Degree</option>
-              <option value="doctorate">Doctorate</option>
-            </Form.Select>
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Preferred Start Date</Form.Label>
-            <Form.Select
-              name="startDate"
-              value={formData.startDate}
-              onChange={handleChange}
-            >
-              <option value="">Select start date</option>
-              <option value="fall-2024">Fall 2024</option>
-              <option value="spring-2025">Spring 2025</option>
-              <option value="summer-2025">Summer 2025</option>
-              <option value="fall-2025">Fall 2025</option>
-            </Form.Select>
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Resume/CV</Form.Label>
-            <Form.Control
-              type="file"
-              name="resume"
-              onChange={handleChange}
-              accept=".pdf,.doc,.docx"
-            />
-            <Form.Text className="text-muted">
-              Accepted formats: PDF, DOC, DOCX (max 5MB)
-            </Form.Text>
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Why are you interested in this program? *</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={4}
-              name="motivation"
-              value={formData.motivation}
-              onChange={handleChange}
-              placeholder="Tell us about your goals and why this program is right for you..."
-              required
-            />
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={onHide} disabled={isSubmitting}>
-            Cancel
-          </Button>
-          <Button variant="primary" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? (
-              <>
-                <Spinner animation="border" size="sm" className="me-2" />
-                Submitting...
-              </>
-            ) : (
-              'Submit Application'
-            )}
-          </Button>
-        </Modal.Footer>
-      </Form>
-    </Modal>
-  );
-};
-
-const ProgramDetailsModal = ({ show, onHide, program, onApply }) => {
-  if (!program) return null;
-
-  // Safely access highlights and requirements with fallbacks
-  const highlights = program.highlights || [];
-  const requirements = program.requirements || [];
-
-  return (
-    <Modal show={show} onHide={onHide} size="xl" centered>
-      <Modal.Header closeButton>
-        <Modal.Title>{program.title}</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Row>
-          <Col lg={8}>
-            <Card.Img 
-              src={program.image} 
-              alt={program.title}
-              className="mb-4 rounded"
-              style={{ height: '300px', objectFit: 'cover', width: '100%' }}
-            />
-            
-            <div className="mb-4">
-              <h5>About This Program</h5>
-              <p>{program.description}</p>
-            </div>
-
-            {highlights.length > 0 && (
-              <div className="mb-4">
-                <h5>Program Highlights</h5>
-                <ListGroup variant="flush">
-                  {highlights.map((highlight, index) => (
-                    <ListGroup.Item key={index} className="px-0">
-                      <CheckCircle size={16} className="text-success me-2" />
-                      {highlight}
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
-              </div>
-            )}
-
-            {requirements.length > 0 && (
-              <div className="mb-4">
-                <h5>Admission Requirements</h5>
-                <ListGroup variant="flush">
-                  {requirements.map((requirement, index) => (
-                    <ListGroup.Item key={index} className="px-0">
-                      <CheckCircle size={16} className="text-primary me-2" />
-                      {requirement}
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
-              </div>
-            )}
-          </Col>
-          
-          <Col lg={4}>
-            <Card className="mb-4">
-              <Card.Body>
-                <div className="mb-3">
-                  <Badge bg="outline-primary" className="me-2">{program.level}</Badge>
-                  <Badge bg="outline-secondary">{program.category}</Badge>
-                  {program.scholarships && (
-                    <Badge bg="success" className="d-block mt-2">Scholarships Available</Badge>
-                  )}
-                </div>
-                
-                <div className="mb-3">
-                  <div className="d-flex align-items-center mb-2">
-                    <MapPin size={16} className="me-2 text-muted" />
-                    <span>{program.location}</span>
-                  </div>
-                  <div className="d-flex align-items-center mb-2">
-                    <Clock size={16} className="me-2 text-muted" />
-                    <span>{program.duration}</span>
-                  </div>
-                  <div className="d-flex align-items-center mb-2">
-                    <Users size={16} className="me-2 text-muted" />
-                    <span>{program.format}</span>
-                  </div>
-                  <div className="d-flex align-items-center mb-2">
-                    <DollarSign size={16} className="me-2 text-muted" />
-                    <span>{program.tuition}</span>
-                  </div>
-                  <div className="d-flex align-items-center mb-2">
-                    <Calendar size={16} className="me-2 text-muted" />
-                    <span>Starts: {program.startDate}</span>
-                  </div>
-                  <div className="d-flex align-items-center mb-2">
-                    <Star size={16} className="me-2 text-warning" fill="currentColor" />
-                    <span>{program.rating}/5 ({program.reviews} reviews)</span>
-                  </div>
-                  <div className="d-flex align-items-center">
-                    <Award size={16} className="me-2 text-muted" />
-                    <span>{program.accreditation}</span>
-                  </div>
-                </div>
-
-                <Alert variant="info" className="small">
-                  <strong>Application Deadline:</strong><br />
-                  {program.applicationDeadline}
-                </Alert>
-
-                <div className="d-grid">
-                  <Button variant="primary" size="lg" onClick={() => onApply(program)}>
-                    Apply Now
-                  </Button>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Modal.Body>
-    </Modal>
-  );
-};
-
-const ComparisonModal = ({ show, onHide, programs, comparedPrograms, onRemoveFromComparison }) => {
-  const comparedProgramsData = programs.filter(p => comparedPrograms.includes(p.id));
-
-  return (
-    <Modal show={show} onHide={onHide} size="xl" centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Program Comparison ({comparedProgramsData.length})</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        {comparedProgramsData.length === 0 ? (
-          <div className="text-center py-5">
-            <BookOpen size={64} className="text-muted mb-3" />
-            <h5>No programs selected for comparison</h5>
-            <p className="text-muted">Add programs to your comparison to see them here.</p>
-          </div>
-        ) : (
-          <div className="table-responsive">
-            <table className="table table-borderless">
-              <thead>
-                <tr>
-                  <th style={{ width: '200px' }}></th>
-                  {comparedProgramsData.map(program => (
-                    <th key={program.id} className="text-center">
-                      <div className="position-relative">
-                        <Button
-                          variant="light"
-                          size="sm"
-                          className="position-absolute top-0 end-0 rounded-circle p-1"
-                          onClick={() => onRemoveFromComparison(program.id)}
-                        >
-                          <X size={12} />
-                        </Button>
-                        <Card.Img 
-                          src={program.image} 
-                          alt={program.title}
-                          className="mb-2 rounded"
-                          style={{ height: '120px', objectFit: 'cover' }}
-                        />
-                        <h6 className="mb-1">{program.title}</h6>
-                        <small className="text-muted">{program.university}</small>
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Level</strong></td>
-                  {comparedProgramsData.map(program => (
-                    <td key={program.id} className="text-center">
-                      <Badge bg="outline-primary">{program.level}</Badge>
-                    </td>
-                  ))}
-                </tr>
-                <tr>
-                  <td><strong>Duration</strong></td>
-                  {comparedProgramsData.map(program => (
-                    <td key={program.id} className="text-center">{program.duration}</td>
-                  ))}
-                </tr>
-                <tr>
-                  <td><strong>Format</strong></td>
-                  {comparedProgramsData.map(program => (
-                    <td key={program.id} className="text-center">{program.format}</td>
-                  ))}
-                </tr>
-                <tr>
-                  <td><strong>Tuition</strong></td>
-                  {comparedProgramsData.map(program => (
-                    <td key={program.id} className="text-center">{program.tuition}</td>
-                  ))}
-                </tr>
-                <tr>
-                  <td><strong>Rating</strong></td>
-                  {comparedProgramsData.map(program => (
-                    <td key={program.id} className="text-center">
-                      <div className="d-flex align-items-center justify-content-center">
-                        <Star size={14} className="text-warning me-1" fill="currentColor" />
-                        {program.rating}
-                      </div>
-                    </td>
-                  ))}
-                </tr>
-                <tr>
-                  <td><strong>Scholarships</strong></td>
-                  {comparedProgramsData.map(program => (
-                    <td key={program.id} className="text-center">
-                      {program.scholarships ? (
-                        <CheckCircle size={16} className="text-success" />
-                      ) : (
-                        <X size={16} className="text-muted" />
-                      )}
-                    </td>
-                  ))}
-                </tr>
-                <tr>
-                  <td><strong>Part-time Available</strong></td>
-                  {comparedProgramsData.map(program => (
-                    <td key={program.id} className="text-center">
-                      {program.partTime ? (
-                        <CheckCircle size={16} className="text-success" />
-                      ) : (
-                        <X size={16} className="text-muted" />
-                      )}
-                    </td>
-                  ))}
-                </tr>
-                <tr>
-                  <td><strong>Online Available</strong></td>
-                  {comparedProgramsData.map(program => (
-                    <td key={program.id} className="text-center">
-                      {program.online ? (
-                        <CheckCircle size={16} className="text-success" />
-                      ) : (
-                        <X size={16} className="text-muted" />
-                      )}
-                    </td>
-                  ))}
-                </tr>
-                <tr>
-                  <td><strong>Application Deadline</strong></td>
-                  {comparedProgramsData.map(program => (
-                    <td key={program.id} className="text-center">{program.applicationDeadline}</td>
-                  ))}
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Modal.Body>
-    </Modal>
-  );
+// API functions for applications
+const submitApplication = async (applicationData) => {
+  const response = await axiosClient.post('/applications', applicationData);
+  return response.data;
 };
 
 export const ProgramsAndDegrees = () => {
-  const [programs, setPrograms] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLevel, setSelectedLevel] = useState('all');
@@ -672,7 +41,6 @@ export const ProgramsAndDegrees = () => {
   const [sortBy, setSortBy] = useState('relevance');
   const [viewMode, setViewMode] = useState('grid');
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showApplicationModal, setShowApplicationModal] = useState(false);
@@ -680,34 +48,42 @@ export const ProgramsAndDegrees = () => {
   const [savedPrograms, setSavedPrograms] = useState([]);
   const [comparedPrograms, setComparedPrograms] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
-  const [loadError, setLoadError] = useState('');
+  const queryClient = useQueryClient();
 
   const itemsPerPage = 6;
 
-  useEffect(() => {
-    const controller = new AbortController();
-    const token = typeof window !== 'undefined' ? localStorage.getItem('bearer_token') : null;
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const queryParams = {
+    search: searchTerm.trim() || undefined,
+    category: selectedCategory !== 'all' ? selectedCategory : undefined,
+    level: selectedLevel !== 'all' ? selectedLevel : undefined,
+    format: selectedFormat !== 'all' ? selectedFormat : undefined,
+  };
 
-    async function fetchAll() {
-      try {
-        setIsLoading(true);
-        setLoadError('');
-        const res = await fetch('/api/programs', { headers, signal: controller.signal });
-        if (!res.ok) throw new Error('Failed to load programs');
-        const data = await res.json();
-        setPrograms(Array.isArray(data) ? data : data.items || []);
-      } catch (e) {
-        // Do not fallback to mock; surface error and show empty state
-        setPrograms([]);
-        setLoadError('Failed to load programs.');
-      } finally {
-        setIsLoading(false);
-      }
+  const { data: programs = [], isLoading, isError, error } = useQuery(
+    ['programs', queryParams],
+    () => getPrograms(queryParams),
+    {
+      keepPreviousData: true,
+      staleTime: 5 * 60 * 1000, 
+      refetchOnWindowFocus: false,
+      retry: 2,
     }
-    fetchAll();
-    return () => controller.abort();
-  }, []);
+  );
+
+  const applicationMutation = useMutation(
+    (applicationData) => addApplication(applicationData),
+    {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(['applications']);
+       
+        console.log('Application submitted successfully:', data);
+      },
+      onError: (error) => {
+        console.error('Application submission error:', error);
+   
+      },
+    }
+  );
 
   const categories = [...new Set(programs.map(p => p.category))];
   const levels = [...new Set(programs.map(p => p.level))];
@@ -800,7 +176,6 @@ export const ProgramsAndDegrees = () => {
       } else if (prev.length < 3) {
         return [...prev, programId];
       } else {
-        // Do not use browser alert; simply ignore when limit reached
         return prev;
       }
     });
@@ -820,6 +195,381 @@ export const ProgramsAndDegrees = () => {
     setCurrentPage(1);
   };
 
+  // Updated ApplicationModal component using the mutation
+  const ApplicationModalWithMutation = ({ show, onHide, program }) => {
+    const [formData, setFormData] = useState({
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      previousEducation: '',
+      motivation: '',
+      startDate: '',
+      resume: null
+    });
+    const [showSuccess, setShowSuccess] = useState(false);
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      
+      const payload = {
+        programId: program?.id,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        previousEducation: formData.previousEducation,
+        motivation: formData.motivation,
+        startDate: formData.startDate,
+      };
+
+      try {
+        await applicationMutation.mutateAsync(payload);
+        setShowSuccess(true);
+        setTimeout(() => {
+          setShowSuccess(false);
+          onHide();
+          setFormData({
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: '',
+            previousEducation: '',
+            motivation: '',
+            startDate: '',
+            resume: null,
+          });
+        }, 1500);
+      } catch (error) {
+        // Error is handled by react-query and the mutation's onError callback
+        console.error('Submission failed:', error);
+      }
+    };
+
+    const handleChange = (e) => {
+      const { name, value, files } = e.target;
+      setFormData(prev => ({
+        ...prev,
+        [name]: files ? files[0] : value
+      }));
+    };
+
+    if (showSuccess) {
+      return (
+        <Modal show={show} onHide={onHide} centered>
+          <Modal.Body className="text-center py-5">
+            <CheckCircle size={64} className="text-success mb-3" />
+            <h4>Application Submitted!</h4>
+            <p className="text-muted mb-0">
+              Thank you for your interest in {program?.title}. We'll review your application and get back to you soon.
+            </p>
+          </Modal.Body>
+        </Modal>
+      );
+    }
+
+    return (
+      <Modal show={show} onHide={onHide} size="lg" centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Apply to {program?.title}</Modal.Title>
+        </Modal.Header>
+        <Form onSubmit={handleSubmit}>
+          <Modal.Body>
+            {applicationMutation.isError && (
+              <Alert variant="danger" className="mb-3">
+                {applicationMutation.error?.response?.data?.message || 
+                 applicationMutation.error?.message || 
+                 'Failed to submit application. Please try again.'}
+              </Alert>
+            )}
+            
+            <Row className="g-3">
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>First Name *</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Last Name *</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Email *</Form.Label>
+                  <Form.Control
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Phone</Form.Label>
+                  <Form.Control
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              </Col>
+              <Col xs={12}>
+                <Form.Group>
+                  <Form.Label>Previous Education</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    name="previousEducation"
+                    value={formData.previousEducation}
+                    onChange={handleChange}
+                    placeholder="Describe your educational background..."
+                  />
+                </Form.Group>
+              </Col>
+              <Col xs={12}>
+                <Form.Group>
+                  <Form.Label>Motivation *</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={4}
+                    name="motivation"
+                    value={formData.motivation}
+                    onChange={handleChange}
+                    placeholder="Why are you interested in this program? What are your goals?"
+                    required
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Preferred Start Date</Form.Label>
+                  <Form.Control
+                    type="date"
+                    name="startDate"
+                    value={formData.startDate}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Resume/CV</Form.Label>
+                  <Form.Control
+                    type="file"
+                    name="resume"
+                    onChange={handleChange}
+                    accept=".pdf,.doc,.docx"
+                  />
+                  <Form.Text className="text-muted">
+                    Upload your resume in PDF, DOC, or DOCX format
+                  </Form.Text>
+                </Form.Group>
+              </Col>
+            </Row>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={onHide} disabled={applicationMutation.isLoading}>
+              Cancel
+            </Button>
+            <Button variant="primary" type="submit" disabled={applicationMutation.isLoading}>
+              {applicationMutation.isLoading ? (
+                <>
+                  <Spinner animation="border" size="sm" className="me-2" />
+                  Submitting...
+                </>
+              ) : (
+                'Submit Application'
+              )}
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+    );
+  };
+
+  // Skeleton loader component for loading states
+  const ProgramSkeleton = () => (
+    <Card className="h-100 border-0 shadow-sm">
+      <Card.Body>
+        <div className="d-flex justify-content-between mb-2">
+          <div className="bg-light rounded" style={{width: '60%', height: '20px'}}></div>
+          <div className="bg-light rounded" style={{width: '30px', height: '30px'}}></div>
+        </div>
+        <div className="bg-light rounded mb-2" style={{width: '40%', height: '16px'}}></div>
+        <div className="bg-light rounded mb-3" style={{width: '100%', height: '60px'}}></div>
+        <div className="d-flex gap-2 mb-3">
+          <div className="bg-light rounded" style={{width: '60px', height: '20px'}}></div>
+          <div className="bg-light rounded" style={{width: '80px', height: '20px'}}></div>
+        </div>
+        <div className="bg-light rounded mb-3" style={{width: '50%', height: '16px'}}></div>
+        <div className="d-flex gap-2">
+          <div className="bg-light rounded" style={{width: '100%', height: '36px'}}></div>
+          <div className="bg-light rounded" style={{width: '40px', height: '36px'}}></div>
+        </div>
+      </Card.Body>
+    </Card>
+  );
+
+  // Placeholder components (you'll need to implement these based on your needs)
+  const ProgramCard = ({ program, onViewDetails, onSave, onCompare, isSaved, isCompared }) => (
+    <Card className="h-100 border-0 shadow-sm program-card">
+      <Card.Body>
+        <div className="d-flex justify-content-between align-items-start mb-2">
+          <h5 className="card-title mb-0">{program.title}</h5>
+          <Button
+            variant="link"
+            size="sm"
+            className="p-0 text-muted"
+            onClick={() => onSave(program.id)}
+          >
+            <Heart size={20} fill={isSaved ? 'currentColor' : 'none'} />
+          </Button>
+        </div>
+        <p className="text-muted small mb-2">{program.university}</p>
+        <p className="card-text text-muted small">{program.description}</p>
+        <div className="d-flex gap-2 mb-3">
+          <Badge bg="primary">{program.level}</Badge>
+          <Badge bg="secondary">{program.format}</Badge>
+        </div>
+        <div className="d-flex justify-content-between align-items-center">
+          <Button variant="primary" onClick={() => onViewDetails(program)}>
+            View Details
+          </Button>
+          <Button
+            variant={isCompared ? 'warning' : 'outline-warning'}
+            size="sm"
+            onClick={() => onCompare(program.id)}
+          >
+            Compare
+          </Button>
+        </div>
+      </Card.Body>
+    </Card>
+  );
+
+  const ProgramListItem = ({ program, onViewDetails, onSave, onCompare, isSaved, isCompared }) => (
+    <Card className="mb-3 border-0 shadow-sm">
+      <Card.Body>
+        <Row className="align-items-center">
+          <Col md={8}>
+            <div className="d-flex align-items-start gap-3">
+              <div className="flex-grow-1">
+                <h5 className="mb-1">{program.title}</h5>
+                <p className="text-muted small mb-1">{program.university}</p>
+                <p className="text-muted small mb-2">{program.description}</p>
+                <div className="d-flex gap-2">
+                  <Badge bg="primary">{program.level}</Badge>
+                  <Badge bg="secondary">{program.format}</Badge>
+                </div>
+              </div>
+            </div>
+          </Col>
+          <Col md={4}>
+            <div className="d-flex gap-2 justify-content-end">
+              <Button
+                variant="link"
+                size="sm"
+                className="p-2"
+                onClick={() => onSave(program.id)}
+              >
+                <Heart size={20} fill={isSaved ? 'currentColor' : 'none'} />
+              </Button>
+              <Button
+                variant={isCompared ? 'warning' : 'outline-warning'}
+                size="sm"
+                onClick={() => onCompare(program.id)}
+              >
+                Compare
+              </Button>
+              <Button variant="primary" onClick={() => onViewDetails(program)}>
+                View Details
+              </Button>
+            </div>
+          </Col>
+        </Row>
+      </Card.Body>
+    </Card>
+  );
+
+  // Placeholder modal components (implement based on your needs)
+  const ProgramDetailsModal = ({ show, onHide, program, onApply }) => (
+    <Modal show={show} onHide={onHide} size="lg" centered>
+      <Modal.Header closeButton>
+        <Modal.Title>{program?.title}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p><strong>University:</strong> {program?.university}</p>
+        <p><strong>Level:</strong> {program?.level}</p>
+        <p><strong>Format:</strong> {program?.format}</p>
+        <p><strong>Description:</strong> {program?.description}</p>
+        {program?.tuition && <p><strong>Tuition:</strong> {program.tuition}</p>}
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onHide}>Close</Button>
+        <Button variant="primary" onClick={() => onApply(program)}>Apply Now</Button>
+      </Modal.Footer>
+    </Modal>
+  );
+
+  const ComparisonModal = ({ show, onHide, programs, comparedPrograms, onRemoveFromComparison }) => (
+    <Modal show={show} onHide={onHide} size="xl" centered>
+      <Modal.Header closeButton>
+        <Modal.Title>Program Comparison</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Row>
+          {comparedPrograms.map(programId => {
+            const program = programs.find(p => p.id === programId);
+            return program ? (
+              <Col key={programId} md={4}>
+                <Card>
+                  <Card.Header className="d-flex justify-content-between">
+                    <h6 className="mb-0">{program.title}</h6>
+                    <Button
+                      variant="link"
+                      size="sm"
+                      className="p-0"
+                      onClick={() => onRemoveFromComparison(programId)}
+                    >
+                      <X size={16} />
+                    </Button>
+                  </Card.Header>
+                  <Card.Body>
+                    <p><strong>University:</strong> {program.university}</p>
+                    <p><strong>Level:</strong> {program.level}</p>
+                    <p><strong>Format:</strong> {program.format}</p>
+                    {program.tuition && <p><strong>Tuition:</strong> {program.tuition}</p>}
+                  </Card.Body>
+                </Card>
+              </Col>
+            ) : null;
+          })}
+        </Row>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onHide}>Close</Button>
+      </Modal.Footer>
+    </Modal>
+  );
+
   return (
     <Container fluid className="py-5">
       <Container>
@@ -831,10 +581,10 @@ export const ProgramsAndDegrees = () => {
           </p>
         </div>
 
-        {/* Optional load error notice */}
-        {loadError && (
-          <Alert variant="warning" className="mb-4">
-            {loadError}
+        {/* Error handling */}
+        {isError && (
+          <Alert variant="danger" className="mb-4">
+            Error loading programs: {error.message}
           </Alert>
         )}
 
@@ -989,7 +739,8 @@ export const ProgramsAndDegrees = () => {
                 <ProgramSkeleton />
               </Col>
             ))}
-          </Row>        ) : currentPrograms.length === 0 ? (
+          </Row>
+        ) : currentPrograms.length === 0 ? (
           <div className="text-center py-5">
             <BookOpen size={64} className="text-muted mb-3" />
             <h5>No programs found</h5>
@@ -1062,7 +813,7 @@ export const ProgramsAndDegrees = () => {
           onApply={handleApply}
         />
 
-        <ApplicationModal
+        <ApplicationModalWithMutation
           show={showApplicationModal}
           onHide={() => setShowApplicationModal(false)}
           program={selectedProgram}
