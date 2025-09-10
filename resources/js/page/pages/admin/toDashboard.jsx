@@ -12,16 +12,7 @@ const TopDashboard=()=>{
 
             <h1 className="mb-0 fw-bold">Dashboard</h1>
           </div>
-          
-            <div className="text-end upgrade-btn me-2">
-                <a
-                    href="#"
-                    className="btn btn-primary text-white"
-                   
-                >
-                    Upgrade to Pro
-                </a>
-            </div>
+         
        
     </div>
     )
