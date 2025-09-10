@@ -55,8 +55,8 @@ const AddCours =()=>{
 
 
 
-if(addMutation.isLoading) return( <div class="spinner-grow text-success" role="status">
-<span class="visually-hidden">Loading...</span>
+if(addMutation.isLoading) return( <div className="spinner-grow text-success" role="status">
+<span className="visually-hidden">Loading...</span>
 </div>)
 if(addMutation.isError) console.log(addMutation.error.message);
 if(addMutation.isSuccess){ console.log("Insert is seccess")
