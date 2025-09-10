@@ -19,3 +19,55 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# =============================================
+# ADDED CONFIGURATIONS FOR LARGE FILE UPLOADS
+# =============================================
+
+<IfModule mod_php.c>
+    # Maximum allowed size for uploaded files (adjust as needed)
+    php_value upload_max_filesize 10240M  # ~10GB
+    
+    # Must be equal or larger than upload_max_filesize
+    php_value post_max_size 10240M
+    
+    # Script memory limit
+    php_value memory_limit 10240M
+    
+    # Maximum execution time (30 minutes)
+    php_value max_execution_time 1800
+    
+    # Maximum input time (30 minutes)
+    php_value max_input_time 1800
+</IfModule>
+
+# Apache-specific settings for large uploads
+<IfModule mod_env.c>
+    # Increase buffer size for large files
+    SetEnv OUTPUT_BUFFER 131072
+</IfModule>
+
+<IfModule mod_headers.c>
+    # Enable keep-alive for large uploads
+    Header set Connection keep-alive
+    
+    # Increase timeout for large uploads
+    Header set Keep-Alive "timeout=300, max=1000"
+</IfModule>
+
+# Security enhancements
+<IfModule mod_headers.c>
+    # Disable server signature
+    ServerSignature Off
+    
+    # Prevent MIME type sniffing
+    Header set X-Content-Type-Options "nosniff"
+</IfModule>
+
+# Disable directory listing
+Options -Indexes
+
+# Compression for non-upload requests
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript
+</IfModule>

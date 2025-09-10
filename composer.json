@@ -6,13 +6,17 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "fruitcake/laravel-cors": "^3.0",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "^2.7",
+        "laravel/cashier": "^14.14",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.2",
-        "pion/laravel-chunk-upload": "^1.5"
+        "league/flysystem-aws-s3-v3": "^3.29",
+        "pion/laravel-chunk-upload": "^1.5",
+        "stripe/stripe-php": "^10.21"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
