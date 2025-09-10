@@ -66,7 +66,7 @@ const FormRegister =()=>{
                     aria-label="Default select example"
                 >
                     <option selected>country</option>
-                    <option defaultChecked></option>
+                    
                 </select>
                 <label
                     className="form-label"

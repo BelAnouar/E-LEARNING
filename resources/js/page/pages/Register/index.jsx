@@ -32,7 +32,7 @@ const Register = () => {
             name: values.name,
             email: values.email,
             password: values.password,
-            country: "MA",
+            country: values.country,
             role: "user",
         };
 
@@ -54,7 +54,6 @@ const Register = () => {
             });
     }
 
-    console.log(formik.errors);
     async function fetchdata() {
         const request = await fetch(
             "https://ipinfo.io/json?token=4f04535df06377"
@@ -68,12 +67,12 @@ const Register = () => {
     }, []);
 
     return (
-        <section className="">
-            <div className="container-fluid">
-                <div className="row">
-                    <div className="col-md-7">
-                        <div className="img  ">
-                            <div className="p-4">
+        <section className="vh-100" style={{ minHeight: "100vh" }}>
+            <div className="container-fluid h-100">
+                <div className="row h-100">
+                    <div className="col-md-7 h-100">
+                        <div className="img h-100 d-flex flex-column">
+                            <div className="p-4 flex-grow-1 d-flex flex-column">
                                 <Typography
                                     color="#fff"
                                     className="fw-bold mb-5"
@@ -86,11 +85,8 @@ const Register = () => {
                                 </Typography>
                                 <Box
                                     color="#fff"
-                                    className="ms-5"
-                                    component="h3"
-                                    sx={{
-                                        pt: "7rem",
-                                    }}
+                                    className="ms-5 flex-grow-1 d-flex flex-column justify-content-center"
+                                    component="div"
                                 >
                                     <Typography
                                         className="fw-bold w-25"
@@ -111,20 +107,41 @@ const Register = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-5">
-                        <div className=" align-items-center  px-5 ms-xl-4 mt-5 pt-5 pt-xl-0 mt-xl-n5">
+                    <div className="col-md-5 h-100 d-flex align-items-center">
+                        <div
+                            className="w-100 px-3 ms-xl-4"
+                            style={{ maxHeight: "100vh", overflowY: "auto" }}
+                        >
                             <form
-                                style={{ width: "23rem" }}
+                                style={{ width: "29rem", margin: "0 auto" }}
                                 onSubmit={formik.handleSubmit}
                             >
-                                <div className="d-flex flex-row navbar-nav fs-5 border-bottom border-2 mb-4">
+                                <div className="d-flex flex-row align-items-center navbar-nav fs-5 border-bottom border-2 mb-4">
                                     <a
                                         href="/Register"
-                                        className="nav-link me-2 "
+                                        className="nav-link me-2"
+                                        style={{
+                                            color:
+                                                window.location.pathname ===
+                                                "/Register"
+                                                    ? "#6f42c1"
+                                                    : "inherit",
+                                        }}
                                     >
                                         Register
                                     </a>
-                                    <a href="/SignIn" className="nav-link">
+                                    <span className="me-2">/</span>
+                                    <a
+                                        href="/SignIn"
+                                        className="nav-link"
+                                        style={{
+                                            color:
+                                                window.location.pathname ===
+                                                "/SignIn"
+                                                    ? "#6f42c1"
+                                                    : "inherit",
+                                        }}
+                                    >
                                         Sign in
                                     </a>
                                 </div>
@@ -249,13 +266,16 @@ const Register = () => {
                                         I agree
                                     </label>
                                 </div>
-                               { formik.errors && <span className="text-danger mt-1">{formik.errors.agree}</span>}
-
+                                {formik.errors && (
+                                    <span className="text-danger mt-1">
+                                        {formik.errors.agree}
+                                    </span>
+                                )}
 
                                 <Typography
                                     variant="caption"
                                     display="block"
-                                    className="small text-muted"
+                                    className="small text-muted mb-3"
                                 >
                                     By creating an account, you agree to the
                                     <a href="#" className="text-success ">
