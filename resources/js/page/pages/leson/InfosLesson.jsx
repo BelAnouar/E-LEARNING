@@ -1,129 +1,125 @@
-import * as React from 'react';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
-import ReactPlayer from "react-player";
-import video from "../../../../../public/storage/files/ART.mp4"
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import Payement from '../../components/modalPayement';
+import React from 'react';
 import { useQuery } from 'react-query';
 import { getWeeks } from '../../lib/weeks';
-import { getFiles } from '../../lib/Files';
 import VideoLesson from './VideoLesson';
+import WeekAccordion from './WeekAccordion';
+import axiosClient from '../api/axios-client';
 
 export default function Info(props) {
-   const {idCour}=props
+    const { idCour } = props;
+
+    const { data: accessData, isLoading: accessLoading, isError: accessError } = useQuery(
+        ['courseAccess', idCour], 
+        () => axiosClient.get(`/check-course-access/${idCour}`).then(res => res.data),
+        {
+            enabled: !!idCour,
+            retry: 1
+        }
+    );
+
+    const { data: weeksData, isLoading: weeksLoading, isError: weeksError } = useQuery(
+        ['weeks', idCour], 
+        getWeeks,
+        {
+            enabled: accessData?.hasAccess || accessData?.isFree
+        }
+    );
+
+    const [selectedFile, setSelectedFile] = React.useState(null);
+
+    if (accessLoading) return (
+        <div className="position-absolute top-50 start-50 translate-middle">
+            <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    );
+
+    if (accessError) {
+        return (
+            <div className="container">
+                <div className="alert alert-danger" role="alert">
+                    Error checking course access. Please try again.
+                </div>
+            </div>
+        );
+    }
 
    
-  const { data, isLoading, isError } = useQuery(['weeks', idCour], getWeeks);
-  const { data: filesData, isLoading: filesLoading, isError: filesError } = useQuery('files', getFiles);
+    if (!accessData?.hasAccess && !accessData?.isFree) {
+        return (
+            <section className='container'>
+                <div className='row'>
+                    <div className='col-12'>
+                        <div className="text-center py-5">
+                            <div className="locked-content bg-light p-5 rounded shadow">
+                                <i className="fas fa-lock fa-3x text-muted mb-4"></i>
+                                <h3 className="text-muted mb-3">This content is locked</h3>
+                                <p className="text-muted mb-4">
+                                    Please purchase this course to access all lessons and materials.
+                                </p>
+                                <div className="d-flex justify-content-center gap-3">
+                                    <button 
+                                        className="btn btn-primary btn-lg"
+                                        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                                    >
+                                        <i className="fas fa-shopping-cart me-2"></i>
+                                        Purchase Course
+                                    </button>
+                                    <button className="btn btn-outline-secondary btn-lg">
+                                        <i className="fas fa-info-circle me-2"></i>
+                                        Course Info
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        );
+    }
 
- 
-  if(isLoading|| filesLoading) return <div class="position-absolute top-50 start-50 translate-middle"></div>
-  if(isError || filesError) return <div>Error</div>
+    if (weeksLoading) return (
+        <div className="container">
+            <div className="text-center py-4">
+                <div className="spinner-border" role="status">
+                    <span className="visually-hidden">Loading course content...</span>
+                </div>
+            </div>
+        </div>
+    );
 
-   const [linkLesson,setLinkLesson]=React.useState(filesData[0].File)
-   const handleclick=(e)=>{
-    e.preventDefault()
-    setLinkLesson(e.target.getAttribute('href'));
-   }
-    
-  return (<section className='container'>
-     
-    <div className='row'>
-    <div className='col-4 ms-4 '>
-    {/* <Accordion disableGutters square >
-        <AccordionSummary sx={{backgroundColor:'rgba(0, 0, 0, .03)'}}
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-        >
-          <Typography  > <CreateNewFolderIcon  sx={{ color:'#944CBF',mr:2,mb:1 }}  />
-            Accordion 1</Typography>
-        </AccordionSummary>
-        <AccordionDetails sx={{borderTop: '1px solid rgba(0, 0, 0, .125)'}}>
-          
-            <ul className='navbar-nav ms-3'>
-              <li className='nav-item'> <a className='nav-link' href='#'>
-              Lorem ipsum dolor sit amet consectetur</a></li>
-              <li className='nav-item'><a className='nav-link' href='#'>
-              Lorem ipsum dolor sit amet consectetur</a></li>
-              <li className='nav-item'><a className='nav-link' href='#'>
-              Lorem ipsum dolor sit amet consectetur</a></li>
-              <li className='nav-item'><a className='nav-link' href='#'>
-              Lorem ipsum dolor sit amet consectetur</a></li>
-            </ul>
-        
-        </AccordionDetails>
-      </Accordion>
-      <Accordion disableGutters square>
-        <AccordionSummary  sx={{backgroundColor:'rgba(0, 0, 0, .03)'}}
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel2a-content"
-          id="panel2a-header"
-        >
-          <Typography> <CreateNewFolderIcon  sx={{ color:'#944CBF',mr:2,mb:1 }}/> Accordion 2</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-            malesuada lacus ex, sit amet blandit leo lobortis eget.
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
-      <Accordion disableGutters square>
-        <AccordionSummary  sx={{backgroundColor:'rgba(0, 0, 0, .03)'}}
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel3a-content"
-          id="panel3a-header"
-        >
-          <Typography><CreateNewFolderIcon  sx={{ color:'#944CBF',mr:2,mb:1 }}/>f</Typography>
-        </AccordionSummary>
-      </Accordion> */}
+    if (weeksError) return (
+        <div className="container">
+            <div className="alert alert-warning" role="alert">
+                Error loading course weeks. Please refresh the page.
+            </div>
+        </div>
+    );
 
-
-
-      {data.map((week,index)=>{
-        return(<>
-     
-          <Accordion disableGutters square key={index} >
-        <AccordionSummary sx={{backgroundColor:'rgba(0, 0, 0, .03)'}}
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-        >
-          <Typography  > <CreateNewFolderIcon  sx={{ color:'#944CBF',mr:2,mb:1 }}  />
-           {week.titre}</Typography>
-        </AccordionSummary><ul className='navbar-nav'>
-        {filesData.map((Item,index)=>{
-          if(week.idweek!==Item.idWeek)return false;
-          return(
-             <AccordionDetails key={index} sx={{borderTop: '1px solid rgba(0, 0, 0, .125)'}}>
-          
-            
-              <li className='nav-item'> <a href={Item.File} className='' onClick={handleclick}>
-              {Item.File}</a></li>
-              
-           
-        
-        </AccordionDetails>
-          )
-        })}
-        </ul>
-      </Accordion>
-    </>
-        )
-      })}
-
-
-      
-      
-
-    </div>
-    <VideoLesson/>
-    </div></section>
-  );
+    return (
+        <section className='container'>
+            <div className='row'>
+                <div className='col-md-4'>
+                    <div className="course-content-sidebar">
+                        <div className="d-flex align-items-center mb-3">
+                            <i className="fas fa-unlock text-success me-2"></i>
+                            <span className="text-success fw-bold">Course Unlocked</span>
+                        </div>
+                        {weeksData && weeksData.map((week, index) => (
+                            <WeekAccordion
+                                key={index}
+                                week={week}
+                                selectedFile={selectedFile}
+                                setSelectedFile={setSelectedFile}
+                            />
+                        ))}
+                    </div>
+                </div>
+                <div className='col-md-8'>
+                    <VideoLesson file={selectedFile} />
+                </div>
+            </div>
+        </section>
+    );
 }
