@@ -1,153 +1,128 @@
-import { useReducer } from "react";
-import { useMutation, useQueryClient } from "react-query";
-import { useNavigate } from "react-router-dom";
-import { addpayemment, getPayemments } from "../lib/payemment";
+import { useState } from 'react';
+import { Modal } from 'react-bootstrap';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import axiosClient from '../pages/api/axios-client';
+
+const stripePromise = loadStripe('pk_test_51RlbF0Q7Tl8g7sbZqHiAMygkKJ2KbaxH0vyV2VfLyInXaMwt37CEhEkQHcoJLXAXBRADqCVXukkDpeX7UAvum4np00bdlgrJYP');
 
 
+const CheckoutForm = ({ courseData, onSuccess, onCancel }) => {
+    const stripe = useStripe();
+    const elements = useElements();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
+    const formatPrice = (price) =>
+        new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        }).format(price);
 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setLoading(true);
+        setError('');
 
+        if (!stripe || !elements) return;
 
-const formReducer = (state, event) => {
-    const { name, value, files } = event.target;
-    const updatedFormValue = name === 'image' ? files[0] : value;
+        try {
+            // 1. Create payment intent from backend
+            const response = await axiosClient.post('/create-payment-intent', {
+                course_id: courseData.idCours,
+            });
 
-    return {
-        ...state,
-        [name]: updatedFormValue
-    }
-  }
-const Payement = (props) => {
-    const [formData, setFormData] = useReducer(formReducer, {})
-     
-    const {data}=props
-   
-    const Navigate=useNavigate()
+            const { clientSecret } = response.data;
 
-    const queryclient=useQueryClient()
-    const addMutation=useMutation(addpayemment,{
-      onSuccess: (data) => {
-        queryclient.prefetchQuery("payement", getPayemments);
-         
-      
-      }
-    })
-    function handleSubmit(e){
-        e.preventDefault()
-      
-        if (Object.keys(formData).length === 0) {
-            alert("Please fill out All fields")
-    
-            return;
-         }
-         
-    
-         const  form= new FormData()
-         let {cardNum, dateN, cvv_code, name_card, email}=formData
-             form.append('dateN', dateN);
-            form.append('email', email);
-              form.append('cvv_code', cvv_code);
-             form.append('Card_Number', cardNum);
-             form.append('name_card', name_card);
-             form.append('idCour',data.idCours)
-         addMutation.mutate(form)
-       }
+            // 2. Confirm payment on frontend
+            const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+                payment_method: {
+                    card: elements.getElement(CardElement),
+                    billing_details: { name: "Test User" },
+                },
+            });
 
-    
-       if(addMutation.isLoading) return <div>Loading!</div>
-       if(addMutation.isError) console.log(addMutation.error.message);
-       if(addMutation.isSuccess) console.log("Insert is seccess");
+            if (error) throw error;
 
+            // 3. Notify backend of success
+            await axiosClient.post('/payment-success', {
+                course_id: courseData.idCours,
+                amount: courseData.prix,
+                payment_intent: paymentIntent.id,
+            });
 
-    
+            onSuccess();
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <>
-            <div>
-      <div className="modals hidden">
-        <h2 className="modal__header">Open your bank account</h2>
-        
-        <div class="row">
-            
-            
-            <div class="col-12">
-                <div class="card p-3">
-                
-                    <div class="card-body border p-0">
-                        <p>
-                            <a class="btn btn-success p-2 w-100 h-100 d-flex align-items-center justify-content-between"
-                                data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="true"
-                                aria-controls="collapseExample">
-                                <span class="fw-bold">Payemmnt</span>
-                               
-                            </a>
-                        </p>
-                        <div class="collapse show p-3 pt-0" id="collapseExample">
-                            <div class="row">
-                                <div class="col-lg-5 mb-lg-0 mb-3">
-                                    <p class="h4 mb-0">Summary</p>
-                                    <p class="mb-0"><span class="fw-bold">cours:</span><span class="c-green">: Name of
-                                            product "{data.titre}"</span>
-                                    </p>
-                                    <p class="mb-0">
-                                        <span class="fw-bold">Price:</span>
-                                        <span class="c-green">:${data.prix}</span>
-                                    </p>
-                                   
-                                </div>
-                                <div class="col-lg-7">
-                                    <form action="" class="form" onSubmit={handleSubmit}>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="form__div">
-                                                    <input type="text" onChange={setFormData} name="cardNum" class="form-control" placeholder=" "/>
-                                                    <label for=""  class="form__label">Card Number</label>
-                                                </div>
-                                            </div>
+        <form onSubmit={handleSubmit}>
+            <CardElement
+                options={{
+                    style: {
+                        base: {
+                            fontSize: '16px',
+                            color: '#424770',
+                            '::placeholder': { color: '#aab7c4' },
+                        },
+                        invalid: { color: '#9e2146' },
+                    },
+                }}
+            />
 
-                                            <div class="col-6">
-                                                <div class="form__div">
-                                                    <input type="date" onChange={setFormData} name="dateN" class="form-control" placeholder="date naicanse "/>
-                                                    <label for="" class="form__label">MM / yy</label>
-                                                </div>
-                                            </div>
+            {error && <div className="alert alert-danger mt-3">{error}</div>}
 
-                                            <div class="col-6">
-                                                <div class="form__div">
-                                                    <input type="password" onChange={setFormData} name="cvv_code" class="form-control" placeholder=" "/>
-                                                    <label for="" class="form__label">cvv code</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="form__div">
-                                                    <input type="text" name="name_card" class="form-control" onChange={setFormData} placeholder=" "/>
-                                                    <label for="" class="form__label">name on the card</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="form__div">
-                                                    <input type="email" name="email" class="form-control" onChange={setFormData} placeholder=" "/>
-                                                    <label for="" class="form__label">email</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <button type="submit"  class="btn btn-primary w-100">Sumbit</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
+            <div className="d-flex justify-content-between mt-4">
+                <button type="button" onClick={onCancel} className="btn btn-secondary">
+                    Cancel
+                </button>
+                <button type="submit" disabled={!stripe || loading} className="btn btn-primary">
+                    {loading ? 'Processing...' : `Pay ${formatPrice(courseData.prix)}`}
+                </button>
+            </div>
+        </form>
+    );
+};
+
+const Payement = ({ courseData, onSuccess, onCancel, show }) => {
+    return (
+        <Modal show={show} onHide={onCancel} size="lg" centered>
+            <Modal.Header closeButton>
+                <Modal.Title>Complete Your Purchase</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <div className="mb-4 p-3 bg-light rounded">
+                    <div className="d-flex align-items-center">
+                        <img
+                            src={`/${courseData.image}`}
+                            alt={courseData.titre}
+                            className="rounded me-3"
+                            style={{ width: '80px', height: '60px', objectFit: 'cover' }}
+                        />
+                        <div className="flex-grow-1">
+                            <h6 className="mb-1">{courseData.titre}</h6>
+                            <p className="text-muted mb-1">by {courseData.enseignant}</p>
+                        </div>
+                        <div className="text-end">
+                            <h4 className="mb-0 text-primary">
+                                {new Intl.NumberFormat('en-US', {
+                                    style: 'currency',
+                                    currency: 'USD',
+                                }).format(courseData.prix)}
+                            </h4>
                         </div>
                     </div>
                 </div>
-            </div>
-          
-        </div>
-    </div>
-      </div>
 
-      <div className="overlay hidden" onClick={()=>{Navigate("/")}}></div>
-   
-        </>
+                <Elements stripe={stripePromise}>
+                    <CheckoutForm courseData={courseData} onSuccess={onSuccess} onCancel={onCancel} />
+                </Elements>
+            </Modal.Body>
+        </Modal>
     );
 };
 
