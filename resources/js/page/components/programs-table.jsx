@@ -1,4 +1,4 @@
-// programs-table.jsx (updated with real API calls)
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -30,16 +30,20 @@ import {
 import { Search, FilterList, MoreVert, Edit, Delete, Visibility, Add } from "@mui/icons-material"
 import { useQuery, useMutation, useQueryClient } from "react-query"
 import { getPrograms, deleteProgram } from "../lib/programs"
+import { EditProgramModal } from "./edit-program-modal"
 import { AddProgramModal } from "./add-program-modal"
 
 export function ProgramsTable() {
   const [searchTerm, setSearchTerm] = useState("")
   const [anchorEl, setAnchorEl] = useState(null)
   const [selectedProgram, setSelectedProgram] = useState(null)
+  const [editModalOpen, setEditModalOpen] = useState(false)
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" })
   const queryClient = useQueryClient()
-  const [isProgramModalOpen, setIsProgramModalOpen] = useState(false)
-  // Fetch programs with react-query
+
+    const [isProgramModalOpen, setIsProgramModalOpen] = useState(false)
+
+
   const { data: programs = [], isLoading, isError, error } = useQuery(
     ['programs', { search: searchTerm }],
     () => getPrograms({ search: searchTerm, limit: 100 }),
@@ -97,14 +101,16 @@ export function ProgramsTable() {
   }
 
   const handleView = () => {
-    // Implement view functionality
+  
     console.log("View program:", selectedProgram)
     handleMenuClose()
   }
 
-  const handleEdit = () => {
-    // Implement edit functionality
-    console.log("Edit program:", selectedProgram)
+  const handleEdit = (e) => {
+    e.preventDefault()
+    setEditModalOpen(true)
+    
+    
     handleMenuClose()
   }
 
@@ -172,7 +178,8 @@ export function ProgramsTable() {
               </Button>
             </Box>
           }
-        />
+        /> 
+        
         <CardContent>
           <TableContainer component={Paper} variant="outlined">
             <Table>
@@ -236,7 +243,7 @@ export function ProgramsTable() {
               <Visibility sx={{ mr: 1 }} fontSize="small" />
               View
             </MenuItem>
-            <MenuItem onClick={handleEdit}>
+            <MenuItem onClick={(e)=>handleEdit(e)}>
               <Edit sx={{ mr: 1 }} fontSize="small" />
               Edit
             </MenuItem>
@@ -246,7 +253,14 @@ export function ProgramsTable() {
             </MenuItem>
           </Menu>
         </CardContent>
+       
       </Card>
+
+      <EditProgramModal
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
+        program={selectedProgram}
+      />
 
       <Snackbar
         open={snackbar.open}

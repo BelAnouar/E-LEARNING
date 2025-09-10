@@ -1,4 +1,4 @@
-// categories-table.jsx (updated with real API calls)
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -29,8 +29,8 @@ import {
 import { Search, FilterList, MoreVert, Edit, Delete, Visibility, Add } from "@mui/icons-material"
 import { useQuery, useMutation, useQueryClient } from "react-query"
 import { getCategories, deleteCategory } from "../lib/categories"
-import { ca } from "date-fns/locale"
 import { AddCategoryModal } from "./add-category-modal"
+import { EditCategoryModal } from "./edit-category-modal" // You might want to create this
 
 export function CategoriesTable() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -38,26 +38,26 @@ export function CategoriesTable() {
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" })
   const queryClient = useQueryClient()
-const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
-  // Fetch categories with react-query
+
   const { data: categories = [], isLoading, isError, error } = useQuery(
     ['categories', { search: searchTerm }],
     () => getCategories({ search: searchTerm, limit: 100 }),
     {
       keepPreviousData: true,
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 5 * 60 * 1000, 
     }
   )
 
-  // Delete category mutation
   const deleteMutation = useMutation(deleteCategory, {
     onSuccess: () => {
       queryClient.invalidateQueries('categories')
       setSnackbar({ open: true, message: "Category deleted successfully", severity: "success" })
     },
     onError: (error) => {
-      setSnackbar({ open: true, message: error.message, severity: "error" })
+      setSnackbar({ open: true, message: error.message || "Failed to delete category", severity: "error" })
     }
   })
 
@@ -83,14 +83,14 @@ const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)
   }
 
   const handleViewPrograms = () => {
-    // Implement view programs functionality
+    
     console.log("View programs for:", selectedCategory)
+    
     handleMenuClose()
   }
 
   const handleEdit = () => {
-    // Implement edit functionality
-    console.log("Edit category:", selectedCategory)
+    setIsEditModalOpen(true)
     handleMenuClose()
   }
 
@@ -108,27 +108,28 @@ const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)
     return (
       <Card sx={{ mb: 3 }}>
         <CardContent>
-          <Alert severity="error">Error loading categories: {error.message}</Alert>
+          <Alert severity="error">Error loading categories: {error.message || "Unknown error"}</Alert>
         </CardContent>
       </Card>
     )
   }
-console.log(categories);
 
   return (
-    <><Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-                <Typography variant="h4" component="h2" fontWeight="bold">
-                  Categories Management
-                </Typography>
-                <Button
-                  variant="contained"
-                  startIcon={<Add />}
-                  onClick={() => setIsCategoryModalOpen(true)}
-                  sx={{ px: 3, py: 1 }}
-                >
-                  Add Category
-                </Button>
-              </Box>
+    <>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+        <Typography variant="h4" component="h2" fontWeight="bold">
+          Categories Management
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          onClick={() => setIsCategoryModalOpen(true)}
+          sx={{ px: 3, py: 1 }}
+        >
+          Add Category
+        </Button>
+      </Box>
+      
       <Card sx={{ mb: 3 }}>
         <CardHeader
           title={<Typography variant="h6">Categories</Typography>}
@@ -160,53 +161,61 @@ console.log(categories);
           }
         />
         <CardContent>
-          <TableContainer component={Paper} variant="outlined">
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Category</TableCell>
-                  <TableCell>Description</TableCell>
-                  <TableCell>Slug</TableCell>
-                  <TableCell>Programs</TableCell>
-                  <TableCell>Created</TableCell>
-                  <TableCell width={50}></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {categories.map((category) => (
-                  <TableRow key={category.id} hover>
-                    <TableCell>
-                      <Typography variant="body2" fontWeight="medium">
-                        {category.name}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 300 }}>
-                        {category.description || "No description"}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={category.slug}
-                        variant="outlined"
-                        size="small"
-                        sx={{ fontFamily: "monospace", fontSize: "0.75rem" }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Chip label={`${category.programCount} programs`} color="default" size="small" />
-                    </TableCell>
-                    <TableCell>{new Date(category.createdAt).toLocaleDateString()}</TableCell>
-                    <TableCell>
-                      <IconButton size="small" onClick={(e) => handleMenuClick(e, category)}>
-                        <MoreVert />
-                      </IconButton>
-                    </TableCell>
+          {categories.length === 0 ? (
+            <Box sx={{ textAlign: "center", py: 4 }}>
+              <Typography variant="body1" color="text.secondary">
+                {searchTerm ? "No categories match your search" : "No categories found"}
+              </Typography>
+            </Box>
+          ) : (
+            <TableContainer component={Paper} variant="outlined">
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Category</TableCell>
+                    <TableCell>Description</TableCell>
+                    <TableCell>Slug</TableCell>
+                    <TableCell>Programs</TableCell>
+                    <TableCell>Created</TableCell>
+                    <TableCell width={50}></TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {categories.map((category) => (
+                    <TableRow key={category.id} hover>
+                      <TableCell>
+                        <Typography variant="body2" fontWeight="medium">
+                          {category.name}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 300 }}>
+                          {category.description || "No description"}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          label={category.slug}
+                          variant="outlined"
+                          size="small"
+                          sx={{ fontFamily: "monospace", fontSize: "0.75rem" }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Chip label={`${category.programCount} programs`} color="default" size="small" />
+                      </TableCell>
+                      <TableCell>{new Date(category.createdAt).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        <IconButton size="small" onClick={(e) => handleMenuClick(e, category)}>
+                          <MoreVert />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
 
           <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
             <MenuItem onClick={handleViewPrograms}>
@@ -217,8 +226,16 @@ console.log(categories);
               <Edit sx={{ mr: 1 }} fontSize="small" />
               Edit
             </MenuItem>
-            <MenuItem onClick={handleDelete} sx={{ color: "error.main" }} disabled={deleteMutation.isLoading}>
-              <Delete sx={{ mr: 1 }} fontSize="small" />
+            <MenuItem 
+              onClick={handleDelete} 
+              sx={{ color: "error.main" }} 
+              disabled={deleteMutation.isLoading}
+            >
+              {deleteMutation.isLoading ? (
+                <CircularProgress size={16} sx={{ mr: 1 }} />
+              ) : (
+                <Delete sx={{ mr: 1 }} fontSize="small" />
+              )}
               {deleteMutation.isLoading ? "Deleting..." : "Delete"}
             </MenuItem>
           </Menu>
@@ -237,7 +254,19 @@ console.log(categories);
           {snackbar.message}
         </Alert>
       </Snackbar>
-      <AddCategoryModal open={isCategoryModalOpen} onOpenChange={setIsCategoryModalOpen} />
+      
+      <AddCategoryModal 
+        open={isCategoryModalOpen} 
+        onOpenChange={setIsCategoryModalOpen} 
+      />
+      
+      {selectedCategory && (
+        <EditCategoryModal 
+          open={isEditModalOpen} 
+          onOpenChange={setIsEditModalOpen}
+          category={selectedCategory}
+        />
+      )}
     </>
   )
 }

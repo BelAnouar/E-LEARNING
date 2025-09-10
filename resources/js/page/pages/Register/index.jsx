@@ -25,6 +25,7 @@ const Register = () => {
         validate: registerValidate,
         onSubmit,
     });
+    
     async function onSubmit(values) {
         console.log(values);
         const payload = {
@@ -60,6 +61,11 @@ const Register = () => {
         );
         const datalocation = await request.json();
         setLocation(datalocation);
+        
+        // Set the country value in formik
+        if (datalocation.country) {
+            formik.setFieldValue("country", datalocation.country);
+        }
     }
 
     useEffect(() => {
@@ -228,26 +234,23 @@ const Register = () => {
                                 </div>
 
                                 <div className="form-floating mb-3">
-                                    <select
-                                        className="form-select form-control border border-dark   rounded-0"
-                                        id="selectCountry"
+                                    <input
+                                        type="text"
+                                        className="form-control border border-dark rounded-0"
+                                        id="floatingCountry"
+                                        placeholder="Country"
                                         name="country"
-                                        aria-label="Default select example"
-                                        {...formik.getFieldProps("country")}
-                                    >
-                                        {location && (
-                                            <option
-                                                defaultValue={location.country}
-                                            >
-                                                {location.country}
-                                            </option>
-                                        )}
-                                    </select>
-                                    <label
-                                        className="form-label"
-                                        htmlFor="selectCountry"
-                                    >
-                                        country
+                                        value={formik.values.country}
+                                        disabled
+                                        readOnly
+                                    />
+                                    {formik.errors.country && formik.touched.country && (
+                                        <span className="text-danger mt-1">
+                                            {formik.errors.country}
+                                        </span>
+                                    )}
+                                    <label htmlFor="floatingCountry">
+                                        Country
                                     </label>
                                 </div>
 

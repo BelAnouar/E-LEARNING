@@ -59,22 +59,27 @@ const FormRegister =()=>{
                 </label>
             </div>
 
-            <div className="form-floating mb-3">
-                <select
-                    className="form-select form-control border border-dark   rounded-0"
-                    id="selectCountry"
-                    aria-label="Default select example"
-                >
-                    <option selected>country</option>
-                    
-                </select>
-                <label
-                    className="form-label"
-                    htmlFor="selectCountry"
-                >
-                    country
-                </label>
-            </div>
+
+<div className="form-floating mb-3">
+    <input
+        type="text"
+        className="form-control border border-dark rounded-0"
+        id="floatingCountry"
+        placeholder="Country"
+        name="country"
+        value={location ? location.country : ""}
+        disabled
+        {...formik.getFieldProps("country")}
+    />
+    {formik.errors.country && formik.touched.country && (
+        <span className="text-danger mt-1">
+            {formik.errors.country}
+        </span>
+    )}
+    <label htmlFor="floatingCountry">
+        Country
+    </label>
+</div>
 
             <div className="form-check fs-4 ">
                 <input onChange={handleChange}

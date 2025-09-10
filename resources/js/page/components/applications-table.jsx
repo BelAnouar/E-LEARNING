@@ -1,4 +1,3 @@
-// applications-table.jsx (new component)
 "use client"
 
 import { useState, useEffect } from "react"
@@ -28,10 +27,16 @@ import {
   FormControl,
   InputLabel,
   Select,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Grid,
+  Divider,
 } from "@mui/material"
-import { Search, FilterList, MoreVert, Edit, Delete, Visibility, Check, Close } from "@mui/icons-material"
+import { Search, FilterList, MoreVert, Edit, Delete, Visibility, Check, Close, Save } from "@mui/icons-material"
 import { useQuery, useMutation, useQueryClient } from "react-query"
-import { getApplications, deleteApplication, approveApplication, rejectApplication } from "../lib/applications"
+import { getApplications, deleteApplication, approveApplication, rejectApplication, updateApplication } from "../lib/applications"
 import { getPrograms } from "../lib/programs"
 
 export function ApplicationsTable() {
@@ -42,9 +47,10 @@ export function ApplicationsTable() {
   const [selectedApplication, setSelectedApplication] = useState(null)
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" })
   const [programs, setPrograms] = useState([])
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const queryClient = useQueryClient()
 
-  // Fetch programs for filter dropdown
+
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
@@ -58,7 +64,6 @@ export function ApplicationsTable() {
     fetchPrograms()
   }, [])
 
-  // Build query params
   const queryParams = {
     search: searchTerm.trim() || undefined,
     status: statusFilter || undefined,
@@ -66,18 +71,16 @@ export function ApplicationsTable() {
     includeProgram: true
   }
 
-  // Fetch applications with react-query
   const { data: applications = [], isLoading, isError, error } = useQuery(
     ['applications', queryParams],
     () => getApplications(queryParams),
     {
       keepPreviousData: true,
-      staleTime: 2 * 60 * 1000, // 2 minutes
+      staleTime: 2 * 60 * 1000, 
       retry: 1,
     }
   )
 
-  // Delete application mutation
   const deleteMutation = useMutation(deleteApplication, {
     onSuccess: () => {
       queryClient.invalidateQueries('applications')
@@ -88,7 +91,6 @@ export function ApplicationsTable() {
     }
   })
 
-  // Approve application mutation
   const approveMutation = useMutation(approveApplication, {
     onSuccess: () => {
       queryClient.invalidateQueries('applications')
@@ -99,7 +101,7 @@ export function ApplicationsTable() {
     }
   })
 
-  // Reject application mutation
+
   const rejectMutation = useMutation(rejectApplication, {
     onSuccess: () => {
       queryClient.invalidateQueries('applications')
@@ -173,8 +175,7 @@ export function ApplicationsTable() {
   }
 
   const handleEdit = () => {
-    // Implement edit functionality
-    console.log("Edit application:", selectedApplication)
+    setIsEditModalOpen(true)
     handleMenuClose()
   }
 
@@ -379,6 +380,15 @@ export function ApplicationsTable() {
           </Menu>
         </CardContent>
       </Card>
+
+      {/* Edit Application Modal */}
+      {selectedApplication && (
+        <EditApplicationModal 
+          open={isEditModalOpen} 
+          onClose={() => setIsEditModalOpen(false)} 
+          application={selectedApplication}
+        />
+      )}
 
       <Snackbar
         open={snackbar.open}
