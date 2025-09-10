@@ -31,7 +31,7 @@ const RegisterForm = () => {
             name: values.name,
             email: values.email,
             password:values.password,
-            country:"MA",role:"admin",
+            country:values.country,role:"admin",
             
           }
          

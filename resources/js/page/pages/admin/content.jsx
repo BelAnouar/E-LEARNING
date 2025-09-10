@@ -64,12 +64,12 @@ const Content = () => {
       });
   }
 
-  if (isLoading) return <div className="d-flex justify-content-center "><div class="spinner-grow text-success" role="status">
-  <span class="visually-hidden">Loading...</span>
+  if (isLoading) return <div className="d-flex justify-content-center "><div className="spinner-grow text-success" role="status">
+  <span className="visually-hidden">Loading...</span>
 </div></div>
   if (isError) return <Modal />;
-  if(addMutation.isLoading) return <div><div class="spinner-grow text-success" role="status">
-  <span class="visually-hidden">Loading...</span>
+  if(addMutation.isLoading) return <div><div className="spinner-grow text-success" role="status">
+  <span className="visually-hidden">Loading...</span>
 </div></div>
     if(addMutation.isError) toast(addMutation.error.message,{hideProgressBar:true,autoClose:4000,type:"warning",position:"top-center"});
     if(addMutation.isSuccess) toast("Insert is seccess",{hideProgressBar:true,autoClose:4000,type:"success",position:"top-center"})
