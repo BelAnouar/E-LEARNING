@@ -7,6 +7,7 @@ use App\Models\File;
 use App\Http\Requests\StoreFileRequest;
 use App\Http\Requests\UpdateFileRequest;
 use App\Http\Resources\FileResource;
+use Illuminate\Support\Facades\Storage; 
 use Carbon\Carbon;
 
 class FileController extends Controller
@@ -28,30 +29,40 @@ class FileController extends Controller
      * @param  \App\Http\Requests\StoreFileRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreFileRequest $request)
-    {
-        $data = $request->validated();
-        $lastModified = Carbon::createFromTimestampMs($data['lastModified'])->toDateTimeString();
+  public function store(StoreFileRequest $request)
+{
+    $data = $request->validated();
+    $lastModified = Carbon::createFromTimestampMs($data['lastModified'])->toDateTimeString();
 
-        $uploadedFile = $request->file('File');
+    $uploadedFile = $request->file('File');
+    $fileName = uniqid() . '_' . $uploadedFile->getClientOriginalName();
 
-    // Generate a unique file name
-        $fileName = uniqid() . '_' . $uploadedFile->getClientOriginalName();
-
-    // Move the uploaded file to the desired storage location
+    // Check MIME type to determine storage location
+    if (str_starts_with($data['type'], 'video/')) {
+     
+        Storage::disk('minio')->putFileAs('videos', $uploadedFile, $fileName);
+        $path = 'videos/' . $fileName;
+        $storageType = 'minio';
+    } else {
+     
         $uploadedFile->storeAs('public/files', $fileName);
-        $Files = File::create([
-          
-           
-            'idWeek' => $data['idWeek'],
-            'File' => 'files/' . $fileName, 
-            "name" =>  $data['name'], 'type' => $data["type"],
-            'size' => $data['size'],
-            'lastModified' => $lastModified
-        ]);
-
-        return response(new FileResource($Files));
+        $path = 'files/' . $fileName;
+        $storageType = 'public';
     }
+
+    $file = File::create([
+        'idWeek' => $data['idWeek'],
+        'File' => $path,
+        'name' => $data['name'],
+        'type' => $data['type'],
+        'size' => $data['size'],
+        'lastModified' => $lastModified
+     
+    ]);
+
+    return response(new FileResource($file));
+}
+
 
     /**
      * Display the specified resource.
@@ -86,4 +97,10 @@ class FileController extends Controller
     {
         //
     }
+
+    public function getFilesByWeek($idWeek)
+{
+    $files = File::where('idWeek', $idWeek)->get();
+    return FileResource::collection($files);
+}
 }
