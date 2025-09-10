@@ -26,4 +26,9 @@ class Cours extends Model
     {
         return $this->hasMany(payement::class, 'idCour');
     }
+    public function users()
+{
+    return $this->belongsToMany(User::class, 'course_user', 'course_id', 'user_id')->withTimestamps();
+}
+
 }

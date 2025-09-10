@@ -5,23 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class payement extends Model
+class Payement extends Model
 {
-    use HasFactory;
-
-    protected $primaryKey = 'idPayement';
-
     protected $fillable = [
-        "Card_Number",
-            "dateN",
-            "name_card",
-            "email",
-            "cvv_code",
-            'idCour'
-
+        'user_id',
+        'course_id',
+        'amount',
+        'payment_intent',
+        'status'
     ];
-    public function cours()
+
+    public function user()
     {
-        return $this->belongsTo(Cours::class, 'idCour');
+        return $this->belongsTo(User::class);
     }
+
+ 
+
+    public function cours()
+{
+    return $this->belongsTo(Cours::class, 'course_id', 'idCours');
+}
+
 }
