@@ -17,3 +17,11 @@ export const AddFile= async (formData) => {
         throw new Error("Failed to add file");
     }
 };
+
+export const getFilesByWeek = async (idWeek) => {
+ 
+   const response = await axiosClient.get(`/files/week/${idWeek}`);
+    const { data } = await response.data;
+    console.log(data);
+    return data;
+};

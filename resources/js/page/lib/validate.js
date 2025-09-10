@@ -7,7 +7,7 @@ export default function login_validate(values){
         errors.email = 'Invalid email address';
     }
 
-    // validation for password
+    
     if(!values.password){
         errors.password = "Required";
     } else if(values.password.length < 8 || values.password.length > 20){
