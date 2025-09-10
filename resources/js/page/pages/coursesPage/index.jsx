@@ -19,7 +19,7 @@ const Courses=()=>{
    const { isLoading, isError, data, error } = useQuery("Cours",getCours);
      
    
-   if(isLoading) return <div class="position-absolute top-50 start-50 translate-middle"><Dna
+   if(isLoading) return <div className="position-absolute top-50 start-50 translate-middle"><Dna
    visible={true} 
    height="
    100"
